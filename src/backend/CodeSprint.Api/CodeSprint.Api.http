@@ -1,0 +1,6 @@
+@CodeSprint.Api_HostAddress = http://localhost:5152
+
+GET {{CodeSprint.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
