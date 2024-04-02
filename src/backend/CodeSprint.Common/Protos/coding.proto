@@ -18,6 +18,12 @@ message Sprint {
 	string description = 9;
 	google.protobuf.Timestamp created_At = 10;
 	repeated tagging.Tag tags = 11;
+	repeated SprintHistory history = 12;
+}
+
+message SprintHistory {
+	google.protobuf.Timestamp timestamp = 1;
+	bool solved = 2;
 }
 
 enum Language {
