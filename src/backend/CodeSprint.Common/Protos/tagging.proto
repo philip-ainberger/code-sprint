@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package tagging;
+
+import "google/protobuf/empty.proto";
+
+message Tag {
+	string id = 1;
+	string user_id = 2;
+	string name = 3;
+}
+
+service TaggingGrpcService {
+	rpc CreateTag(CreateTagRequest) returns (Tag) {}
+
+	rpc GetTag(GetTagRequest) returns (Tag) {}
+	
+	rpc UpdateTag(UpdateTagRequest) returns (Tag) {}
+	
+	rpc DeleteTag(DeleteTagRequest) returns (google.protobuf.Empty) {}
+	
+	rpc ListTags(ListTagsRequest) returns (ListTagsResponse) {}
+}
+
+message CreateTagRequest {
+	string name = 2;
+}
+
+message GetTagRequest {
+	string id = 1;
+}
+
+message UpdateTagRequest {
+	string id = 1;
+	string name = 2;
+}
+
+message DeleteTagRequest {
+	string id = 1;
+}
+
+message ListTagsRequest {
+	string user_id = 1;
+}
+
+message ListTagsResponse {
+	repeated Tag tags = 1;
+}

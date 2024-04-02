@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package coding;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "Protos/tagging.proto";
+
+message Sprint {
+	string id = 1;
+	string user_id = 2;
+	Language language = 3;
+	string code_solution = 4;
+	string code_exercise = 5;
+	uint32 solved_count = 6;
+	uint32 failed_count = 7;
+	string title = 8;
+	string description = 9;
+	google.protobuf.Timestamp created_At = 10;
+	repeated tagging.Tag tags = 11;
+}
+
+enum Language {
+	None = 0;	
+	Csharp = 1;
+	Powershell = 2;
+}
+
+service CodingGrpcService {
+	rpc CreateSprint(CreateSprintRequest) returns (CreateSprintResponse) {}
+
+	rpc GetSprint(GetSprintRequest) returns (Sprint) {}
+  
+	rpc UpdateSprint(UpdateSprintRequest) returns (UpdateSprintResponse) {}
+  
+	rpc DeleteSprint(DeleteSprintRequest) returns (google.protobuf.Empty) {}
+  
+	rpc ListSprints(ListSprintsRequest) returns (ListSprintsResponse) {}
+
+	rpc SolvedSprint(SolvedSprintRequest) returns (UpdateSprintResponse) {}
+
+	rpc FailedSprint(FailedSprintRequest) returns (UpdateSprintResponse) {}
+}
+
+message CreateSprintRequest {
+	Language language = 1;
+	string code_solution = 2;
+	string code_exercise = 3;
+	string title = 4;
+	string description = 5;
+	repeated string tags = 6;
+}
+
+message GetSprintRequest {
+	string id = 1;
+}
+
+message CreateSprintResponse {
+	Sprint sprint = 1;
+}
+
+message SolvedSprintRequest {
+	string id = 1;
+}
+
+message FailedSprintRequest {
+	string id = 1;
+}
+
+message UpdateSprintRequest {
+	string id = 1;	
+	Language language = 2;
+	string code_solution = 3;
+	string code_exercise = 4;
+	string title = 5;
+	string description = 6;
+	repeated string tags = 7;
+}
+
+message UpdateSprintResponse {
+	Sprint sprint = 1;
+}
+
+message DeleteSprintRequest {
+	string id = 1;
+}
+
+message ListSprintsRequest {
+	string user_id = 1;
+}
+
+message ListSprintsResponse {
+	repeated Sprint sprints = 1;
+}
