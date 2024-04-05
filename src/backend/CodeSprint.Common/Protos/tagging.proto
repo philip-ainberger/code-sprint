@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package tagging;
 
+option csharp_namespace = "CodeSprint.Common.Grpc.Tagging";
+
 import "google/protobuf/empty.proto";
 
 message Tag {
