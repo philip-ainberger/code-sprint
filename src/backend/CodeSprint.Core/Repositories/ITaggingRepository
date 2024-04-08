@@ -1,7 +1,5 @@
-using CodeSprint.Core.Models;
-
 namespace CodeSprint.Core.Repositories;
 
-public interface ITaggingRepository : IUserRefDataRepository<Tag>
+public interface ITaggingRepository : IUserRefDataRepository<Models.Tag>
 {
 }
