@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeSprint.Common\CodeSprint.Common.csproj" />
+    <ProjectReference Include="..\CodeSprint.Core\CodeSprint.Core.csproj" />
   </ItemGroup>
 
 </Project>
