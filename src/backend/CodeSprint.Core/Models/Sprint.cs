@@ -12,8 +12,9 @@ public record Sprint(
     string CodeExercise,
     uint SolvedCount,
     uint FailedCount,
-    Language Language,
+    Languages Language,
     Guid[] Tags,
-    SprintHistory[] History) : BaseUserRefModel(Id, UserId);
+    SprintHistory[] History,
+    DateTime? DeletedAt = null) : BaseUserRefModel(Id, UserId, DeletedAt);
 
 public record SprintHistory(DateTime Timestamp, bool Solved);

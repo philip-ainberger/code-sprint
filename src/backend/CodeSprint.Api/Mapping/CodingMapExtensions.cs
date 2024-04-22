@@ -61,23 +61,23 @@ public static class CodingMapExtensions
         );
     }
 
-    internal static Common.Grpc.Coding.Language ToProtoLanguage(this Core.Enums.Language language)
+    internal static Common.Grpc.Coding.Language ToProtoLanguage(this Core.Enums.Languages language)
     {
         return language switch
         {
-            Core.Enums.Language.CSharp => Common.Grpc.Coding.Language.Csharp,
-            Core.Enums.Language.Powershell => Common.Grpc.Coding.Language.Powershell,
+            Core.Enums.Languages.CSharp => Common.Grpc.Coding.Language.Csharp,
+            Core.Enums.Languages.Powershell => Common.Grpc.Coding.Language.Powershell,
             _ => Common.Grpc.Coding.Language.None,
         };
     }
 
-    internal static Core.Enums.Language ToEntityLanguage(this Common.Grpc.Coding.Language language)
+    internal static Core.Enums.Languages ToEntityLanguage(this Common.Grpc.Coding.Language language)
     {
         return language switch
         {
-            Common.Grpc.Coding.Language.Csharp => Core.Enums.Language.CSharp,
-            Common.Grpc.Coding.Language.Powershell => Core.Enums.Language.Powershell,
-            _ => Core.Enums.Language.Unknown,
+            Common.Grpc.Coding.Language.Csharp => Core.Enums.Languages.CSharp,
+            Common.Grpc.Coding.Language.Powershell => Core.Enums.Languages.Powershell,
+            _ => Core.Enums.Languages.Unknown,
         };
     }
 
