@@ -1,15 +1,25 @@
+using CodeSprint.Api.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// ==== services start
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddCustomCors();
+builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+builder.Services.AddCustomOptions(builder.Configuration);
+
+builder.Services.AddMongoClient();
+// ==== services end
+
+
+// ==== build start
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -18,8 +28,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseGrpcWeb();
+app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+// ==== build end

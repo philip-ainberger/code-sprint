@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSprint.Api", "CodeSprint.Api\CodeSprint.Api.csproj", "{81F92EB1-AE12-4243-AA26-F04DBA76AF0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSprint.Api", "CodeSprint.Api\CodeSprint.Api.csproj", "{81F92EB1-AE12-4243-AA26-F04DBA76AF0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSprint.Common", "CodeSprint.Common\CodeSprint.Common.csproj", "{F250BE96-460B-4041-BF97-4D232679EDC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSprint.Common", "CodeSprint.Common\CodeSprint.Common.csproj", "{F250BE96-460B-4041-BF97-4D232679EDC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSprint.Core", "CodeSprint.Core\CodeSprint.Core.csproj", "{4EA8DAED-6C1D-4FB2-ABA0-D666F4F3CE50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSprint.Core", "CodeSprint.Core\CodeSprint.Core.csproj", "{4EA8DAED-6C1D-4FB2-ABA0-D666F4F3CE50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSprint.Tests", "CodeSprint.Tests\CodeSprint.Tests.csproj", "{62C6500A-E89B-40FA-844B-2724F75386C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSprint.Tests", "CodeSprint.Tests\CodeSprint.Tests.csproj", "{62C6500A-E89B-40FA-844B-2724F75386C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSprint.IntegrationTests", "CodeSprint.IntegrationTests\CodeSprint.IntegrationTests.csproj", "{89B9347C-266E-4102-809D-737114980218}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSprint.IntegrationTests", "CodeSprint.IntegrationTests\CodeSprint.IntegrationTests.csproj", "{89B9347C-266E-4102-809D-737114980218}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeSprint.Tests.Common", "CodeSprint.Tests.Common\CodeSprint.Tests.Common.csproj", "{0A48E672-B54C-4922-914D-AC836D2BA413}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSprint.Tests.Common", "CodeSprint.Tests.Common\CodeSprint.Tests.Common.csproj", "{0A48E672-B54C-4922-914D-AC836D2BA413}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{882F362D-B865-45E3-B056-606897B4BE38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{62C6500A-E89B-40FA-844B-2724F75386C9} = {882F362D-B865-45E3-B056-606897B4BE38}
+		{89B9347C-266E-4102-809D-737114980218} = {882F362D-B865-45E3-B056-606897B4BE38}
+		{0A48E672-B54C-4922-914D-AC836D2BA413} = {882F362D-B865-45E3-B056-606897B4BE38}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3346FD87-0759-41FB-8300-454BC6930BD3}
