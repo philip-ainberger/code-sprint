@@ -72,6 +72,7 @@ public static class SetupExtensions
             .AddCustomMongoDbCollections<RefreshToken, IRefreshTokenRepository, RefreshTokenRepository>("refresh_tokens")
             .AddCustomMongoDbCollections<Core.Models.Tag, ITaggingRepository, TaggingRepository>("tags")
             .AddCustomMongoDbCollections<Sprint, ICodingRepository, CodingRepository>("sprints")
+            .AddCustomMongoDbCollections<SprintActivity, ISprintActivityRepository, SprintActivityRepository>("sprint_activities")
             .AddCustomMongoDbCollections<User, IUserRepository, UserRepository>("users");
     }
 

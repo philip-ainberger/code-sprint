@@ -7,6 +7,12 @@ public class ListSprintsRequestValidator : BaseRequestValidator<ListSprintsReque
 {
     public ListSprintsRequestValidator()
     {
-        RuleFor(c => c.UserId).NotEmpty().Must(BeValidGuid);
+        RuleFor(c => c.Filter.Languages)
+            .NotEmpty()
+            .When(c => c.Filter != null);
+        
+        RuleFor(c => c.Filter.Tags)
+            .NotEmpty()
+            .When(c => c.Filter != null);
     }
 }

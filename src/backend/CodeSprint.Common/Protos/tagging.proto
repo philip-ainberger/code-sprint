@@ -42,7 +42,6 @@ message DeleteTagRequest {
 }
 
 message ListTagsRequest {
-	string user_id = 1;
 }
 
 message ListTagsResponse {

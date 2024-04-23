@@ -1,5 +1,6 @@
 using CodeSprint.Api.Repositories.Extensions;
 using CodeSprint.Core.Repositories;
+using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 
 namespace CodeSprint.Api.Mapping;
@@ -64,6 +65,13 @@ public static class CodingMapExtensions
         {
             Core.Enums.Languages.CSharp => Common.Grpc.Coding.Language.Csharp,
             Core.Enums.Languages.Powershell => Common.Grpc.Coding.Language.Powershell,
+            Core.Enums.Languages.Typescript => Common.Grpc.Coding.Language.Typescript,
+            Core.Enums.Languages.Java => Common.Grpc.Coding.Language.Java,
+            Core.Enums.Languages.Javascript => Common.Grpc.Coding.Language.Javascript,
+            Core.Enums.Languages.Go => Common.Grpc.Coding.Language.Go,
+            Core.Enums.Languages.Markdown => Common.Grpc.Coding.Language.Markdown,
+            Core.Enums.Languages.Dockerfile => Common.Grpc.Coding.Language.Dockerfile,
+            Core.Enums.Languages.Sql => Common.Grpc.Coding.Language.Sql,
             _ => Common.Grpc.Coding.Language.None,
         };
     }
@@ -74,7 +82,19 @@ public static class CodingMapExtensions
         {
             Common.Grpc.Coding.Language.Csharp => Core.Enums.Languages.CSharp,
             Common.Grpc.Coding.Language.Powershell => Core.Enums.Languages.Powershell,
+            Common.Grpc.Coding.Language.Typescript => Core.Enums.Languages.Typescript,
+            Common.Grpc.Coding.Language.Javascript => Core.Enums.Languages.Javascript,
+            Common.Grpc.Coding.Language.Java => Core.Enums.Languages.Java,
+            Common.Grpc.Coding.Language.Sql => Core.Enums.Languages.Sql,
+            Common.Grpc.Coding.Language.Markdown => Core.Enums.Languages.Markdown,
+            Common.Grpc.Coding.Language.Dockerfile => Core.Enums.Languages.Dockerfile,
+            Common.Grpc.Coding.Language.Go => Core.Enums.Languages.Go,
             _ => Core.Enums.Languages.Unknown,
         };
+    }
+
+    internal static Core.Enums.Languages[] ToEntityLanguages(this RepeatedField<Common.Grpc.Coding.Language> languages)
+    {
+        return languages?.Select(ToEntityLanguage).ToArray() ?? [];
     }
 }

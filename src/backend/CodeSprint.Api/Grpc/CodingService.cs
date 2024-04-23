@@ -1,6 +1,134 @@
+using CodeSprint.Api.Mapping;
+using CodeSprint.Api.Services;
+using CodeSprint.Commom.Exceptions;
+using CodeSprint.Common.Grpc.Coding;
+using CodeSprint.Core.Models;
+using CodeSprint.Core.Repositories;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
+
 namespace CodeSprint.Api.Grpc;
 
-public class CodingService : Common.Grpc.Coding.CodingGrpcService.CodingGrpcServiceBase
+[Authorize]
+public class CodingService : CodingGrpcService.CodingGrpcServiceBase
 {
+    private readonly ICodingRepository _repository;
+    private readonly ISprintActivityRepository _sprintActivityRepository;
+    private readonly ITaggingRepository _taggingRepository;
+    private readonly Guid _userId;
 
+    public CodingService(
+        ICodingRepository repository, 
+        ITaggingRepository taggingRepository, 
+        ISessionProviderService sessionProviderService,
+        ISprintActivityRepository sprintActivityRepository)
+    {
+        _repository = repository;
+        _taggingRepository = taggingRepository;
+        _sprintActivityRepository = sprintActivityRepository;
+
+        _userId = sessionProviderService.GetCurrentSessionUserId();
+    }
+
+    public override async Task<CreateSprintResponse> CreateSprint(CreateSprintRequest request, ServerCallContext context)
+    {
+        var result = await _repository.AddAsync(_userId, request.ToEntity(_userId, _taggingRepository));
+
+        return new CreateSprintResponse() { Sprint = result.ToProto(_taggingRepository) };
+    }
+
+    public override async Task<Empty> DeleteSprint(DeleteSprintRequest request, ServerCallContext context)
+    {
+        await _repository.RemoveAsync(_userId, Guid.Parse(request.Id));
+
+        return new Empty();
+    }
+
+    public override async Task<Empty> FailedSprint(FailedSprintRequest request, ServerCallContext context)
+    {
+        await CompletedSprintAsync(request.Id, false);
+
+        return new Empty();
+    }
+
+    public override async Task<Common.Grpc.Coding.Sprint> GetSprint(GetSprintRequest request, ServerCallContext context)
+    {
+        var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(request.Id));
+
+        if (entity == null)
+        {
+            // TODO LOG
+            throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", request.Id));
+        }
+
+        return entity.ToProto(_taggingRepository);
+    }
+
+    public override async Task<ListSprintsResponse> ListSprints(ListSprintsRequest request, ServerCallContext context)
+    {
+        var entities = await _repository.GetByFilterAsync(
+            _userId,
+            request.Page,
+            request.Filter?.Languages?.ToEntityLanguages() ?? [],
+            request.Filter?.Tags?.ToEntityIds() ?? []);
+
+        var totalCount = await _repository.CountByFilterAsync(_userId,
+            request.Filter?.Languages?.ToEntityLanguages() ?? [],
+            request.Filter?.Tags?.ToEntityIds() ?? []);
+
+        return new ListSprintsResponse()
+        {
+            Sprints = { entities.Select(c => c.ToProto(_taggingRepository)) },
+            TotalCount = totalCount
+        };
+    }
+
+    public override async Task<Empty> SolvedSprint(SolvedSprintRequest request, ServerCallContext context)
+    {
+        await CompletedSprintAsync(request.Id, true);
+        
+        return new Empty();
+    }
+
+    public override async Task<UpdateSprintResponse> UpdateSprint(UpdateSprintRequest request, ServerCallContext context)
+    {
+        var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(request.Id));
+
+        if (entity == null)
+        {
+            // TODO LOG
+            throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", request.Id));
+        }
+
+        entity = entity with
+        {
+            Title = request.Title,
+            Description = request.Description,
+            CodeExercise = request.CodeExercise,
+            CodeSolution = request.CodeSolution,
+            Language = request.Language.ToEntityLanguage(),
+            Tags = request.Tags.ToEntityIds()
+        };
+
+        var updatedEntity = await _repository.UpdateAsync(_userId, entity);
+
+        return new UpdateSprintResponse()
+        {
+            Sprint = updatedEntity.ToProto(_taggingRepository)
+        };
+    }
+
+    private async Task CompletedSprintAsync(string id, bool successfull)
+    {
+        var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(id));
+
+        if (entity == null)
+        {
+            // TODO LOG
+            throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", id));
+        }
+
+        await _sprintActivityRepository.AddAsync(_userId, new SprintActivity(Guid.NewGuid(), _userId, Guid.Parse(id), DateTime.UtcNow, successfull));
+    }
 }
