@@ -5,6 +5,10 @@ using Microsoft.Extensions.Options;
 using CodeSprint.Common.Extensions;
 using CodeSprint.Common.Dtos;
 using CodeSprint.Common.Jwt;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
+using CodeSprint.Api.Services;
 
 namespace CodeSprint.Api.Controllers;
 
@@ -12,24 +16,27 @@ namespace CodeSprint.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IOptions<GithubOAuthOptions> _gitHubOptions;
+    private readonly GithubOAuthOptions _gitHubOptions;
+    private readonly JwtOptions _jwtOptions;
     private readonly IUserRepository _userRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IJwtService _jwtBuilder;
+    private readonly IGitHubOAuthService _gitHubOAuthService;
+    private readonly IJwtService _jwtService;
 
     public AuthController(
         IOptions<GithubOAuthOptions> gitHubOptions,
+        IOptions<JwtOptions> jwtOptions,
         IUserRepository userRepository,
         IRefreshTokenRepository refreshTokenRepository,
-        IHttpClientFactory httpClientFactory,
+        IGitHubOAuthService gitHubOAuthService,
         IJwtService jwtBuilder)
     {
-        _gitHubOptions = gitHubOptions;
+        _gitHubOptions = gitHubOptions.Value;
+        _jwtOptions = jwtOptions.Value;
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
-        _httpClientFactory = httpClientFactory;
-        _jwtBuilder = jwtBuilder;
+        _gitHubOAuthService = gitHubOAuthService;
+        _jwtService = jwtBuilder;
     }
 
     [HttpGet("callback")]
@@ -37,33 +44,57 @@ public class AuthController : ControllerBase
     {
         if (string.IsNullOrEmpty(code)) return BadRequest("Authorization code missing");
 
-        var accessToken = await GetAccessTokenAsync(code);
+        var accessToken = await _gitHubOAuthService.GetBearerTokenAsync(code, _gitHubOptions.ClientId, _gitHubOptions.ClientSecret);
         if (string.IsNullOrEmpty(accessToken)) return BadRequest("Failed to retrieve access token");
 
-        var userInfo = await GetUserInfoAsync(accessToken);
+        var userInfo = await _gitHubOAuthService.GetUserInfoAsync(accessToken);
         var userId = await TryFindOrAddUserAsync(userInfo);
 
-        var jwtToken = _jwtBuilder.BuildRefreshJwt(userId);
+        var jwtToken = _jwtService.BuildRefreshJwt(userId);
         await _refreshTokenRepository.AddOrOverrideAsync(userId, jwtToken.TokenValue);
 
         HttpContext.AddRefreshTokenToCookie(jwtToken.TokenValue);
         return Redirect($"http://localhost:4200/");
     }
 
-    private async Task<string> GetAccessTokenAsync(string authorizationCode)
+    [Authorize]
+    [HttpGet("validate")]
+    public async Task<IActionResult> ValidateTokenAsync()
     {
-        using (var client = _httpClientFactory.CreateClient())
-        {
-            return await client.GetBearerTokenAsync(authorizationCode, _gitHubOptions.Value.ClientId, _gitHubOptions.Value.ClientSecret);
-        }
+        var jwt = await HttpContext.GetTokenAsync("access_token");
+
+        if (string.IsNullOrEmpty(jwt)) return Unauthorized("Access token is missing");
+
+        var jwtTokenHandler = new JwtSecurityTokenHandler();
+        var token = jwtTokenHandler.ReadJwtToken(jwt);
+
+        return Ok(new JwtDto() { Token = jwt, ExpiresIn = token.ValidTo.Subtract(DateTime.UtcNow).Milliseconds });
     }
 
-    private async Task<GitHubUserInfoDto> GetUserInfoAsync(string bearerToken)
+    [HttpGet("refresh")]
+    public async Task<IActionResult> RefreshTokenAsync()
     {
-        using (var client = _httpClientFactory.CreateClient())
-        {
-            return await client.GetUserInfoAsync(bearerToken);
-        }
+        var refreshToken = HttpContext.GetRefreshTokenFromCookie();
+        if (string.IsNullOrEmpty(refreshToken)) return Unauthorized("Refresh token is missing");
+
+        var validationResult = await _jwtService.ValidateRefreshTokenAsync(refreshToken);
+        if(!validationResult.IsValid) return Unauthorized("Invalid refresh token");
+
+        var token = _jwtService.ReadTokenAsync(refreshToken);
+
+        if(!Guid.TryParse(token.Subject, out Guid userId)) return Unauthorized("Token contains invalid subject");
+
+        var entityToken = await _refreshTokenRepository.GetByUserIdAsync(userId);
+        if (entityToken.Token != refreshToken) return Unauthorized("Invalid refresh token"); 
+
+        var newJwtToken = _jwtService.BuildJwt(userId);
+        var newRefreshToken = _jwtService.BuildRefreshJwt(userId);
+
+        await _refreshTokenRepository.AddOrOverrideAsync(userId, newRefreshToken.TokenValue);
+
+        HttpContext.AddRefreshTokenToCookie(newRefreshToken.TokenValue);
+
+        return Ok(new JwtDto() { Token = newJwtToken.TokenValue, ExpiresIn = newJwtToken.Expiration.Subtract(DateTime.UtcNow).Milliseconds });
     }
 
     private async Task<Guid> TryFindOrAddUserAsync(GitHubUserInfoDto userInfo)

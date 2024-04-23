@@ -21,8 +21,11 @@ builder.Services
     .AddMongoDbAccess()
     .AddCustomMongoDbCollections();
 
+builder.Services.AddScoped<IGitHubOAuthService, GitHubOAuthService>();
 builder.Services.AddScoped<ISessionProviderService, SessionProviderService>();
 builder.Services.AddValidatorsFromAssemblyContaining<BaseRequestValidator<IMessage>>();
+
+builder.Services.AddHttpClient();
 
 // ==== services end
 
@@ -49,3 +52,8 @@ app.MapControllers();
 
 app.Run();
 // ==== build end
+
+public partial class Program
+{
+    protected Program() { }
+}

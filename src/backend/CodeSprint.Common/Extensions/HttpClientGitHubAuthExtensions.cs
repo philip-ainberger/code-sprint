@@ -6,8 +6,8 @@ namespace CodeSprint.Common.Extensions;
 
 public static class HttpClientGitHubAuthExtensions
 {
-    private const string GITHUB_ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token";
-    private const string GITHUB_USER_URL = "https://api.github.com/user";
+    public const string GITHUB_ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token";
+    public const string GITHUB_USER_URL = "https://api.github.com/user";
 
     public static void AddGitHubDefaultHeaders(this HttpClient httpClient)
     {

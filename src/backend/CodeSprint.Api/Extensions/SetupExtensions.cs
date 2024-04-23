@@ -1,4 +1,5 @@
 ﻿using CodeSprint.Api.Repositories;
+using CodeSprint.Common;
 using CodeSprint.Common.Jwt;
 using CodeSprint.Common.Options;
 using CodeSprint.Core.Models;
@@ -31,18 +32,13 @@ public static class SetupExtensions
                     .GetSection("Jwt")
                     .Get<JwtOptions>();
 
-                if (jwtOptions == null || string.IsNullOrEmpty(jwtOptions.Key))
+                if (jwtOptions == null || string.IsNullOrEmpty(jwtOptions.AccessTokensKey))
                     throw new ArgumentException("");
 
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
-                    ValidIssuer = jwtOptions.ValidIssuer,
-                    ValidAudience = jwtOptions.ValidAudience
-                };
+                options.TokenValidationParameters = Defaults.GetDefaultTokenValidationParameters(
+                    jwtOptions.AccessTokensKey,
+                    jwtOptions.ValidIssuer,
+                    jwtOptions.ValidAudience);
             });
     }
 

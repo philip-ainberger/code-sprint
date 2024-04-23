@@ -15,7 +15,12 @@ public class JwtServiceTests
     public JwtServiceTests()
     {
         _optionsMock = new Mock<IOptions<JwtOptions>>();
-        _optionsMock.Setup(o => o.Value).Returns(new JwtOptions { Key = "HMkm9Q8K9ztjhsjbccjfE1BZggliMqY8FpNW5vWRbLZgsveg55Jnv1iPRKTsS62s" });
+        _optionsMock.Setup(o => o.Value).Returns(new JwtOptions 
+            { 
+                AccessTokensKey = "HMkm9Q8K9ztjhsjbccjfE1BZggliMqY8FpNW5vWRbLZgsveg55Jnv1iPRKTsS62s",
+                RefreshTokensKey = "23e7251e6f6ccf687621b8540c3ad4d214429e06aba6dda0bb3c1db28a071388"
+            }
+        );
 
         _jwtService = new JwtService(_optionsMock.Object);
     }
@@ -35,7 +40,7 @@ public class JwtServiceTests
 
         Assert.Equal(_optionsMock.Object.Value.ValidIssuer, token.Issuer);
         Assert.Equal(_optionsMock.Object.Value.ValidAudience, token.Audiences.First());
-        Assert.Contains(token.Claims, c => c.Type == "nameid" && c.Value == userId.ToString());
+        Assert.Equal(token.Subject, userId.ToString());
         Assert.True(DateTime.UtcNow.AddMinutes(14) < jwtInfo.Expiration && DateTime.UtcNow.AddMinutes(16) > jwtInfo.Expiration);
     }
 }

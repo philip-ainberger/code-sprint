@@ -1,4 +1,5 @@
 ﻿using CodeSprint.Common.Options;
+using CodeSprint.Core.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,29 +10,44 @@ namespace CodeSprint.Common.Jwt;
 
 public class JwtService : IJwtService
 {
-    private JwtOptions _options;
+    private readonly JwtOptions _options;
 
     public JwtService(IOptions<JwtOptions> options)
     {
         _options = options.Value;
     }
 
+    public JwtSecurityToken ReadTokenAsync(string jwt)
+    {
+        var jwtTokenHandler = new JwtSecurityTokenHandler();
+        return jwtTokenHandler.ReadJwtToken(jwt);
+    }
+
+    public async Task<TokenValidationResult> ValidateRefreshTokenAsync(string jwt)
+    {
+        var jwtTokenHandler = new JwtSecurityTokenHandler();
+        var validationResult = await jwtTokenHandler.ValidateTokenAsync(jwt,
+            Defaults.GetDefaultTokenValidationParameters(_options.RefreshTokensKey, _options.ValidIssuer, _options.ValidAudience));
+
+        return validationResult;
+    }
+
     public JwtInfo BuildJwt(Guid userId)
     {
-        return BuildJwt(userId, DateTime.UtcNow.AddMinutes(15));
+        return BuildJwt(userId, DateTime.UtcNow.AddMinutes(15), GetAccessTokenKey());
     }
 
     public JwtInfo BuildRefreshJwt(Guid userId)
     {
-        return BuildJwt(userId, DateTime.UtcNow.AddDays(2));
+        return BuildJwt(userId, DateTime.UtcNow.AddDays(2), GetRefreshTokenKey());
     }
 
-    private JwtInfo BuildJwt(Guid userId, DateTime expiration)
+    private JwtInfo BuildJwt(Guid userId, DateTime expiration, byte[] key)
     {
-        var signingKey = new SymmetricSecurityKey(GetKey());
+        var signingKey = new SymmetricSecurityKey(key);
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-        var claim = new Claim(ClaimTypes.NameIdentifier, userId.ToString());
+        var claim = new Claim(JwtRegisteredClaimNames.Sub, userId.ToString());
 
         var securityTokenDescriptor = new SecurityTokenDescriptor
         {
@@ -49,5 +65,7 @@ public class JwtService : IJwtService
         return new JwtInfo(tokenString, expiration);
     }
 
-    private byte[] GetKey() => Encoding.UTF8.GetBytes(_options.Key);
+    private byte[] GetAccessTokenKey() => Encoding.UTF8.GetBytes(_options.AccessTokensKey);
+
+    private byte[] GetRefreshTokenKey() => Encoding.UTF8.GetBytes(_options.RefreshTokensKey);
 }
