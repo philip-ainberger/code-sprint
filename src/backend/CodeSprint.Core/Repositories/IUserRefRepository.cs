@@ -2,7 +2,7 @@ using CodeSprint.Core.Models;
 
 namespace CodeSprint.Core.Repositories;
 
-public interface IUserRefDataRepository<T> where T : BaseModel
+public interface IUserRefRepository<T> where T : BaseModel
 {
     Task<T> AddAsync(Guid userId, T entity);
     Task<T> UpdateAsync(Guid userId, T entity);

@@ -21,6 +21,7 @@
     <ProjectReference Include="..\CodeSprint.Api\CodeSprint.Api.csproj" />
     <ProjectReference Include="..\CodeSprint.Common\CodeSprint.Common.csproj" />
     <ProjectReference Include="..\CodeSprint.Core\CodeSprint.Core.csproj" />
+    <ProjectReference Include="..\CodeSprint.Tests.Common\CodeSprint.Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

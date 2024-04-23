@@ -13,8 +13,4 @@ public record Sprint(
     uint SolvedCount,
     uint FailedCount,
     Languages Language,
-    Guid[] Tags,
-    SprintHistory[] History,
-    DateTime? DeletedAt = null) : BaseUserRefModel(Id, UserId, DeletedAt);
-
-public record SprintHistory(DateTime Timestamp, bool Solved);
+    Guid[] Tags) : BaseUserRefModel(Id, UserId);

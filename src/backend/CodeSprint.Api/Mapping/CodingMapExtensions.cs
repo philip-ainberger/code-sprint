@@ -20,8 +20,7 @@ public static class CodingMapExtensions
             FailedCount = model.FailedCount,
             CodeExercise = model.CodeExercise,
             CodeSolution = model.CodeSolution,
-            Tags = { taggingRepository.ResolveTagsById(model.Tags, model.UserId).Select(TaggingMapExtensions.ToProto) },
-            History = { model.History.Select(ToProto) }
+            Tags = { taggingRepository.ResolveTagsById(model.Tags, model.UserId).Select(TaggingMapExtensions.ToProto) }
         };
     }
 
@@ -38,8 +37,7 @@ public static class CodingMapExtensions
             proto.SolvedCount,
             proto.FailedCount,
             proto.Language.ToEntityLanguage(),
-            proto.Tags.Select(c => Guid.Parse(c.Id)).ToArray(),
-            proto.History.Select(ToEntity).ToArray()
+            proto.Tags.Select(c => Guid.Parse(c.Id)).ToArray()
         );
     }
     
@@ -56,8 +54,7 @@ public static class CodingMapExtensions
             default,
             default,
             proto.Language.ToEntityLanguage(),
-            taggingRepository.ResolveTagsById(proto.Tags.ToArray(), userId).Select(c => c.Id).ToArray(),
-            Array.Empty<Core.Models.SprintHistory>()
+            taggingRepository.ResolveTagsById(proto.Tags.ToArray(), userId).Select(c => c.Id).ToArray()
         );
     }
 
@@ -79,22 +76,5 @@ public static class CodingMapExtensions
             Common.Grpc.Coding.Language.Powershell => Core.Enums.Languages.Powershell,
             _ => Core.Enums.Languages.Unknown,
         };
-    }
-
-    public static Common.Grpc.Coding.SprintHistory ToProto(this Core.Models.SprintHistory model)
-    {
-        return new Common.Grpc.Coding.SprintHistory
-        {
-            Timestamp = Timestamp.FromDateTime(model.Timestamp.ToUniversalTime()),
-            Solved = model.Solved
-        };
-    }
-
-    public static Core.Models.SprintHistory ToEntity(this Common.Grpc.Coding.SprintHistory proto)
-    {
-        return new Core.Models.SprintHistory(
-            proto.Timestamp.ToDateTime(),
-            proto.Solved
-        );
     }
 }
