@@ -9,16 +9,10 @@ using Microsoft.AspNetCore.Authorization;
 namespace CodeSprint.Api.Grpc;
 
 [Authorize]
-public class TaggingService : TaggingGrpcService.TaggingGrpcServiceBase
+public class TaggingService(ITaggingRepository taggingRepository, ISessionProviderService sessionProviderService) : TaggingGrpcService.TaggingGrpcServiceBase
 {
-    private readonly ITaggingRepository _taggingRepository;
-    private readonly Guid _userId;
-
-    public TaggingService(ITaggingRepository taggingRepository, ISessionProviderService sessionProviderService)
-    {
-        _taggingRepository = taggingRepository;
-        _userId = sessionProviderService.GetCurrentSessionUserId();
-    }
+    private readonly ITaggingRepository _taggingRepository = taggingRepository;
+    private readonly Guid _userId = sessionProviderService.GetCurrentSessionUserId();
 
     public override async Task<Tag> CreateTag(CreateTagRequest request, ServerCallContext context)
     {
@@ -42,13 +36,9 @@ public class TaggingService : TaggingGrpcService.TaggingGrpcServiceBase
     {
         var entity = await _taggingRepository.GetByIdAsync(_userId, Guid.Parse(request.Id));
 
-        if (entity == null)
-        {
-            // TODO log
-            throw new RpcException(new Status(StatusCode.NotFound, string.Format("Could not find tag '{0}'", request.Id)));
-        }
-
-        return entity.ToProto();
+        return entity == null
+            ? throw new RpcException(new Status(StatusCode.NotFound, string.Format("Could not find tag '{0}'", request.Id)))
+            : entity.ToProto();
     }
 
     public override async Task<ListTagsResponse> ListTags(ListTagsRequest request, ServerCallContext context)
@@ -63,10 +53,7 @@ public class TaggingService : TaggingGrpcService.TaggingGrpcServiceBase
         var entity = await _taggingRepository.GetByIdAsync(_userId, Guid.Parse(request.Id));
 
         if (entity == null)
-        {
-            // TODO log
             throw new RpcException(new Status(StatusCode.NotFound, string.Format("Could not find tag '{0}'", request.Id)));
-        }
 
         entity = entity with
         {

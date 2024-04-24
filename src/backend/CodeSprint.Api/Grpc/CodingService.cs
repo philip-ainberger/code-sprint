@@ -1,6 +1,6 @@
 using CodeSprint.Api.Mapping;
 using CodeSprint.Api.Services;
-using CodeSprint.Commom.Exceptions;
+using CodeSprint.Common.Exceptions;
 using CodeSprint.Common.Grpc.Coding;
 using CodeSprint.Core.Models;
 using CodeSprint.Core.Repositories;
@@ -11,25 +11,16 @@ using Microsoft.AspNetCore.Authorization;
 namespace CodeSprint.Api.Grpc;
 
 [Authorize]
-public class CodingService : CodingGrpcService.CodingGrpcServiceBase
+public class CodingService(
+    ICodingRepository repository,
+    ITaggingRepository taggingRepository,
+    ISessionProviderService sessionProviderService,
+    ISprintActivityRepository sprintActivityRepository) : CodingGrpcService.CodingGrpcServiceBase
 {
-    private readonly ICodingRepository _repository;
-    private readonly ISprintActivityRepository _sprintActivityRepository;
-    private readonly ITaggingRepository _taggingRepository;
-    private readonly Guid _userId;
-
-    public CodingService(
-        ICodingRepository repository, 
-        ITaggingRepository taggingRepository, 
-        ISessionProviderService sessionProviderService,
-        ISprintActivityRepository sprintActivityRepository)
-    {
-        _repository = repository;
-        _taggingRepository = taggingRepository;
-        _sprintActivityRepository = sprintActivityRepository;
-
-        _userId = sessionProviderService.GetCurrentSessionUserId();
-    }
+    private readonly ICodingRepository _repository = repository;
+    private readonly ISprintActivityRepository _sprintActivityRepository = sprintActivityRepository;
+    private readonly ITaggingRepository _taggingRepository = taggingRepository;
+    private readonly Guid _userId = sessionProviderService.GetCurrentSessionUserId();
 
     public override async Task<CreateSprintResponse> CreateSprint(CreateSprintRequest request, ServerCallContext context)
     {
@@ -56,13 +47,9 @@ public class CodingService : CodingGrpcService.CodingGrpcServiceBase
     {
         var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(request.Id));
 
-        if (entity == null)
-        {
-            // TODO LOG
-            throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", request.Id));
-        }
-
-        return entity.ToProto(_taggingRepository);
+        return entity == null
+            ? throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", request.Id))
+            : entity.ToProto(_taggingRepository);
     }
 
     public override async Task<ListSprintsResponse> ListSprints(ListSprintsRequest request, ServerCallContext context)
@@ -96,10 +83,7 @@ public class CodingService : CodingGrpcService.CodingGrpcServiceBase
         var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(request.Id));
 
         if (entity == null)
-        {
-            // TODO LOG
             throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", request.Id));
-        }
 
         entity = entity with
         {
@@ -124,10 +108,7 @@ public class CodingService : CodingGrpcService.CodingGrpcServiceBase
         var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(id));
 
         if (entity == null)
-        {
-            // TODO LOG
             throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", id));
-        }
 
         await _sprintActivityRepository.AddAsync(_userId, new SprintActivity(Guid.NewGuid(), _userId, Guid.Parse(id), DateTime.UtcNow, successfull));
     }

@@ -1,4 +1,4 @@
-﻿using CodeSprint.Commom.Exceptions;
+﻿using CodeSprint.Common.Exceptions;
 using FluentValidation;
 using Grpc.Core.Interceptors;
 using Grpc.Core;
@@ -7,6 +7,13 @@ namespace CodeSprint.Api.Interceptors;
 
 public class ValidationInterceptor : Interceptor
 {
+    private readonly ILogger<ValidationInterceptor> _logger;
+
+    public ValidationInterceptor(ILogger<ValidationInterceptor> logger)
+    {
+        _logger = logger;
+    }
+
     public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
         TRequest request,
         ServerCallContext context,
@@ -33,17 +40,14 @@ public class ValidationInterceptor : Interceptor
 
                 throw new RpcException(new Status(StatusCode.InvalidArgument, "Validation failed"), metadata);
             }
-
-            // TODO log debug
-        }
-        catch (RpcException rpcException)
-        {
-            // TODO log
-            throw;
         }
         catch (Exception ex)
         {
-            // TODO log
+            _logger.LogError(ex, "[GRPC][ValidationInterceptor][{GrpcRequestType}] Exception was thrown!", typeof(TRequest));
+
+            if (ex is RpcException)
+                throw;
+
             throw new RpcException(new Status(StatusCode.Internal, "An internal error occurred."));
         }
 

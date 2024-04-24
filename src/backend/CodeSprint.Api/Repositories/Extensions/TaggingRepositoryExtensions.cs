@@ -1,4 +1,4 @@
-using CodeSprint.Commom.Exceptions;
+using CodeSprint.Common.Exceptions;
 using CodeSprint.Core.Repositories;
 
 namespace CodeSprint.Api.Repositories.Extensions;

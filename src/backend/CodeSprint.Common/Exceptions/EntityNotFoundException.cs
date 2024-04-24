@@ -1,4 +1,4 @@
-namespace CodeSprint.Commom.Exceptions;
+namespace CodeSprint.Common.Exceptions;
 
 public class EntityNotFoundException : ApplicationException
 {
