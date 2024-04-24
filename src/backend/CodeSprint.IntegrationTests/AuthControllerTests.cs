@@ -8,7 +8,7 @@ using System.Net.Http.Json;
 
 namespace CodeSprint.IntegrationTests;
 
-public class AuthControllerTests : BaseApplicationTest
+public class AuthControllerTests : BaseApplicationTests
 {
     private readonly HttpClient _httpClient;
     private readonly IMongoCollection<User> _userCollection;

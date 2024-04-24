@@ -15,8 +15,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Google.Protobuf" Version="3.26.0" />
-  	<PackageReference Include="Grpc.Net.Client" Version="2.62.0-pre1" />
-  	<PackageReference Include="Grpc.Net.Client.Web" Version="2.61.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.62.0" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.62.0" />  	
   	<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.3" />
   	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
   	<PackageReference Include="Moq" Version="4.20.70" />

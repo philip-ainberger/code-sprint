@@ -28,7 +28,7 @@ public class SessionProviderServiceTests
         var expectedUserId = Guid.NewGuid();
         var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
         {
-            new Claim(ClaimTypes.NameIdentifier, expectedUserId.ToString())
+            new(ClaimTypes.NameIdentifier, expectedUserId.ToString())
         }));
 
         _httpContext.User = claimsPrincipal;

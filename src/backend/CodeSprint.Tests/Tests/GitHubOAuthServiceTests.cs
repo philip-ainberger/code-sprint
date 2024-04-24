@@ -16,7 +16,7 @@ public class GitHubOAuthServiceTests
     private readonly Mock<IOptions<GithubOAuthOptions>> _optionsMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
     private readonly Mock<HttpMessageHandler> _httpMessageHandlerMock;
-    private readonly GithubOAuthOptions _defaultOptions = new GithubOAuthOptions()
+    private readonly GithubOAuthOptions _defaultOptions = new()
     {
         ClientId = "clientId",
         ClientSecret = "clientSecret",
