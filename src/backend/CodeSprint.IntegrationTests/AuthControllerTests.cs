@@ -174,13 +174,13 @@ public class AuthControllerTests : BaseApplicationTest
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
     }
 
-    private string ExtractJwtFromCookie(string cookie)
+    private static string ExtractJwtFromCookie(string cookie)
     {
         var cookieParts = cookie.Split(';').FirstOrDefault()?.Split('=');
         return cookieParts!.Length > 1 ? cookieParts[1] : string.Empty;
     }
 
-    private bool IsJwt(string token)
+    private static bool IsJwt(string token)
     {
         if (string.IsNullOrEmpty(token))
         {

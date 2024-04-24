@@ -16,6 +16,15 @@ public class BaseApplicationTest : IClassFixture<ApiWebApplicationFactory<Progra
 
     public void Dispose()
     {
-        _mongoCollectionProvider.MongoClient.DropDatabase("default");
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if(disposing)
+        {
+            _mongoCollectionProvider.MongoClient.DropDatabase("default");
+        }
     }
 }

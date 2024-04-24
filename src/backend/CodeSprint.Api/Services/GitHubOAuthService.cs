@@ -1,15 +1,19 @@
 ﻿using CodeSprint.Common;
 using CodeSprint.Common.Dtos;
+using CodeSprint.Common.Options;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 
 namespace CodeSprint.Api.Services;
 
 public class GitHubOAuthService : IGitHubOAuthService
 {
+    private readonly GithubOAuthOptions _options;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public GitHubOAuthService(IHttpClientFactory httpClientFactory)
+    public GitHubOAuthService(IOptions<GithubOAuthOptions> options, IHttpClientFactory httpClientFactory)
     {
+        _options = options.Value;
         _httpClientFactory = httpClientFactory;
     }
 
@@ -27,7 +31,7 @@ public class GitHubOAuthService : IGitHubOAuthService
                 grant_type = "authorization_code"
             };
 
-            var response = await httpClient.PostAsJsonAsync(Defaults.GITHUB_ACCESS_TOKEN_URL, requestBody);
+            var response = await httpClient.PostAsJsonAsync(_options.OAuthAccessTokenEndpoint, requestBody);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -52,7 +56,7 @@ public class GitHubOAuthService : IGitHubOAuthService
             AddGitHubDefaultHeaders(httpClient);
             AddGitHubBearerToken(httpClient, bearerToken);
 
-            var response = await httpClient.GetAsync(Defaults.GITHUB_USER_URL);
+            var response = await httpClient.GetAsync(_options.UserApiEndpoint);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -70,13 +74,13 @@ public class GitHubOAuthService : IGitHubOAuthService
         }
     }
 
-    private void AddGitHubDefaultHeaders(HttpClient httpClient)
+    private static void AddGitHubDefaultHeaders(HttpClient httpClient)
     {
         httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         httpClient.DefaultRequestHeaders.UserAgent.TryParseAdd("code-sprint-api/1.0"); // TODO
     }
 
-    private void AddGitHubBearerToken(HttpClient httpClient, string bearerToken)
+    private static void AddGitHubBearerToken(HttpClient httpClient, string bearerToken)
     {
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
     }

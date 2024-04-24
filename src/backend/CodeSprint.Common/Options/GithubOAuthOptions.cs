@@ -6,4 +6,6 @@ public class GithubOAuthOptions
 
     public required string ClientId { get; set; }
     public required string ClientSecret { get; set; }
+    public required string OAuthAccessTokenEndpoint { get; set; }
+    public required string UserApiEndpoint { get; set; }
 }

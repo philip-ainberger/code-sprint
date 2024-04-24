@@ -72,7 +72,7 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
         base.Dispose(disposing);
     }
 
-    private Mock<IGitHubOAuthService> GetGitHubOAuthServiceMock()
+    private static Mock<IGitHubOAuthService> GetGitHubOAuthServiceMock()
     {
         var mock = new Mock<IGitHubOAuthService>();
 

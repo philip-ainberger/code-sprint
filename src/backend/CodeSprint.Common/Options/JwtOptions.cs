@@ -6,6 +6,6 @@ public class JwtOptions
 
     public required string AccessTokensKey { get; set; }
     public required string RefreshTokensKey { get; set; }
-    public string ValidIssuer => "code-sprint";
-    public string ValidAudience => "code-sprint-api";
+    public string ValidIssuer { get; set; } = "code-sprint";
+    public string ValidAudience { get; set; } = "code-sprint-api";
 }

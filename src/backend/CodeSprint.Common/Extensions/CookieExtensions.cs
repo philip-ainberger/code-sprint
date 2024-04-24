@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using static Google.Rpc.Context.AttributeContext.Types;
 
 namespace CodeSprint.Common.Extensions;
 

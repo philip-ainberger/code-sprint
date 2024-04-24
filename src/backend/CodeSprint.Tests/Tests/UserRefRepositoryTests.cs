@@ -1,15 +1,14 @@
-﻿using CodeSprint.Core.Repositories;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Mongo2Go;
 using MongoDB.Driver;
 
 namespace CodeSprint.Tests.Tests;
 
-public class UserRefRepositoryTests
+public class UserRefRepositoryTests : IDisposable
 {
     private const string DatabaseName = "default";
     private const string CollectionName = "temp-collection";
-    private readonly IUserRefRepository<TestModel> _repository;
+    private readonly TestRepository _repository;
     private readonly MongoClient _mongoClient;
     private readonly MongoDbRunner _mongoRunner;
 
@@ -25,7 +24,7 @@ public class UserRefRepositoryTests
         _repository = new TestRepository(collection);
     }
 
-    private TestModel CreateTestModel()
+    private static TestModel CreateTestModel()
     {
         return new TestModel(
             Guid.NewGuid(),
@@ -114,9 +113,18 @@ public class UserRefRepositoryTests
         result.Should().NotBeNull();
         result.Name.Should().Be(updatedModel.Name);
     }
-
+    
     public void Dispose()
     {
-        _mongoRunner.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _mongoRunner.Dispose();
+        }
     }
 }

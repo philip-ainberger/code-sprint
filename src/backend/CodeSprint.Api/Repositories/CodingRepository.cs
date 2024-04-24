@@ -39,7 +39,7 @@ public class CodingRepository : UserRefRepository<Core.Models.Sprint>, ICodingRe
         return (uint)await _collection.CountDocumentsAsync(filter);
     }
 
-    private FilterDefinition<Core.Models.Sprint> BuildFilter(Guid userId, Languages[] languages, Guid[] tagIds)
+    private static FilterDefinition<Core.Models.Sprint> BuildFilter(Guid userId, Languages[] languages, Guid[] tagIds)
     {
         var filter = Builders<Core.Models.Sprint>.Filter.Eq(s => s.UserId, userId);
 
