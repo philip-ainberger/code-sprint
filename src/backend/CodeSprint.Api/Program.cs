@@ -1,4 +1,6 @@
 using CodeSprint.Api.Extensions;
+using CodeSprint.Api.Grpc;
+using CodeSprint.Api.Interceptors;
 using CodeSprint.Api.Services;
 using CodeSprint.Api.Validators;
 using FluentValidation;
@@ -16,6 +18,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddCustomCors();
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 builder.Services.AddCustomOptions(builder.Configuration);
+
+builder.Services.AddGrpc(options =>
+{
+    options.Interceptors.Add<ExceptionHandlingInterceptor>();
+    options.Interceptors.Add<ValidationInterceptor>();
+});
 
 builder.Services
     .AddMongoDbAccess()
@@ -49,6 +57,9 @@ app.UseAuthorization();
 app.UseGrpcWeb();
 app.UseHttpsRedirection();
 app.MapControllers();
+
+app.MapGrpcService<CodingService>().EnableGrpcWeb();
+app.MapGrpcService<TaggingService>().EnableGrpcWeb();
 
 app.Run();
 // ==== build end

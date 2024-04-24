@@ -8,11 +8,11 @@ public class ListSprintsRequestValidator : BaseRequestValidator<ListSprintsReque
     public ListSprintsRequestValidator()
     {
         RuleFor(c => c.Filter.Languages)
-            .NotEmpty()
+            .NotNull()
             .When(c => c.Filter != null);
         
         RuleFor(c => c.Filter.Tags)
-            .NotEmpty()
+            .NotNull()
             .When(c => c.Filter != null);
     }
 }
