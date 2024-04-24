@@ -2,6 +2,7 @@ using CodeSprint.Api.Repositories.Extensions;
 using CodeSprint.Core.Repositories;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CodeSprint.Api.Mapping;
 
@@ -25,23 +26,6 @@ public static class CodingMapExtensions
         };
     }
 
-    public static Core.Models.Sprint ToEntity(this Common.Grpc.Coding.Sprint proto)
-    {
-        return new Core.Models.Sprint(
-            Guid.Parse(proto.Id),
-            Guid.Parse(proto.UserId),
-            proto.CreatedAt.ToDateTime(),
-            proto.Title,
-            proto.Description,
-            proto.CodeSolution,
-            proto.CodeExercise,
-            proto.SolvedCount,
-            proto.FailedCount,
-            proto.Language.ToEntityLanguage(),
-            proto.Tags.Select(c => Guid.Parse(c.Id)).ToArray()
-        );
-    }
-
     public static Core.Models.Sprint ToEntity(this Common.Grpc.Coding.CreateSprintRequest proto, Guid userId, ITaggingRepository taggingRepository)
     {
         return new Core.Models.Sprint(
@@ -59,6 +43,7 @@ public static class CodingMapExtensions
         );
     }
 
+    [ExcludeFromCodeCoverage]
     internal static Common.Grpc.Coding.Language ToProtoLanguage(this Core.Enums.Languages language)
     {
         return language switch
@@ -76,6 +61,7 @@ public static class CodingMapExtensions
         };
     }
 
+    [ExcludeFromCodeCoverage]
     internal static Core.Enums.Languages ToEntityLanguage(this Common.Grpc.Coding.Language language)
     {
         return language switch

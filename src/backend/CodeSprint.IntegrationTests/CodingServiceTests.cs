@@ -40,6 +40,20 @@ public class CodingServiceTests(ApiWebApplicationFactory<Program> factory) : Bas
     }
 
     [Fact]
+    public async Task GetSprint_FailValidationWithInvalidGuid_ReturnInvalidArgument()
+    {
+        // Act
+        var client = new CodingGrpcService.CodingGrpcServiceClient(GetChannel());
+        var request = new GetSprintRequest() { Id = "INVALID" };
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<RpcException>(() => client.GetSprintAsync(request).ResponseAsync);
+
+        exception.Should().NotBeNull();
+        exception.StatusCode.Should().Be(StatusCode.InvalidArgument);
+    }
+
+    [Fact]
     public async Task GetSprints_MultipleSprints_ReturnAllSprints()
     {
         // Arrange

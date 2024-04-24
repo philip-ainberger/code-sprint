@@ -33,11 +33,6 @@ public static class TaggingMapExtensions
         );
     }
 
-    public static Core.Models.Tag[] ToEntity(this RepeatedField<Common.Grpc.Tagging.Tag> proto)
-    {
-        return proto.Select(ToEntity).ToArray();
-    }
-
     public static Guid[] ToEntityIds(this RepeatedField<string> proto)
     {
         return proto.Select(Guid.Parse).ToArray();
