@@ -11,7 +11,7 @@ public static class BuilderExtensions
     {
         return services.Replace(new ServiceDescriptor(typeof(TService), typeof(TImplementation), lifetime));
     }
-    
+
     public static IServiceCollection Replace<TService>(this IServiceCollection services, object implementation, ServiceLifetime lifetime)
         where TService : class
     {

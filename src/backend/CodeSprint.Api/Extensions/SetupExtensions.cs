@@ -6,9 +6,7 @@ using CodeSprint.Core.Models;
 using CodeSprint.Core.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
-using System.Text;
 
 namespace CodeSprint.Api.Extensions;
 
@@ -72,7 +70,7 @@ public static class SetupExtensions
             .AddCustomMongoDbCollections<User, IUserRepository, UserRepository>("users");
     }
 
-    public static IServiceCollection AddCustomMongoDbCollections<TModel, TRepositoryInterface, TRepositoryImpl>(this IServiceCollection services, string collectionName) 
+    public static IServiceCollection AddCustomMongoDbCollections<TModel, TRepositoryInterface, TRepositoryImpl>(this IServiceCollection services, string collectionName)
         where TRepositoryImpl : class, TRepositoryInterface
         where TRepositoryInterface : class
     {

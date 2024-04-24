@@ -1,8 +1,8 @@
-﻿using CodeSprint.Tests.Common;
-using Grpc.Net.Client.Web;
-using Grpc.Net.Client;
+﻿using CodeSprint.Core.Enums;
 using CodeSprint.Core.Models;
-using CodeSprint.Core.Enums;
+using CodeSprint.Tests.Common;
+using Grpc.Net.Client;
+using Grpc.Net.Client.Web;
 
 namespace CodeSprint.IntegrationTests;
 
@@ -68,7 +68,7 @@ public class BaseApplicationTests : IClassFixture<ApiWebApplicationFactory<Progr
 
     protected virtual void Dispose(bool disposing)
     {
-        if(disposing)
+        if (disposing)
         {
             _mongoCollectionProvider.MongoClient.DropDatabase("default");
         }

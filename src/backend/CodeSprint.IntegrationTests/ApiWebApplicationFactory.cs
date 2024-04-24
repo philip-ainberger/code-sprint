@@ -1,18 +1,18 @@
 ﻿using CodeSprint.Api.Services;
 using CodeSprint.Common.Dtos;
-using CodeSprint.Tests.Common;
 using CodeSprint.Common.Options;
+using CodeSprint.Tests.Common;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Mongo2Go;
-using Moq;
-using System.Text;
-using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Mongo2Go;
+using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace CodeSprint.IntegrationTests;
 
@@ -26,7 +26,7 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
     };
 
     public string MongoConnectionString => _mongoRunner.ConnectionString;
-    
+
     public ApiWebApplicationFactory()
     {
         _mongoRunner = MongoDbRunner.Start();

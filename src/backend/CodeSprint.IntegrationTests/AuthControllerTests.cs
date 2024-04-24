@@ -26,7 +26,7 @@ public class AuthControllerTests : BaseApplicationTests
     {
         // Act
         var loginResult = await _httpClient.GetAsync("/api/auth/callback?code=test");
-        
+
         // Assert
         AssertHttpStatus(loginResult, HttpStatusCode.Found);
         AssertHeaderForCookie(loginResult);
@@ -39,7 +39,7 @@ public class AuthControllerTests : BaseApplicationTests
         // Arrange
         await _httpClient.GetAsync("/api/auth/callback?code=test");
         var previousUpdated = _refreshTokenCollection.AsQueryable().First().UpdatedAt;
-        
+
         // Act
         var loginResult = await _httpClient.GetAsync("/api/auth/callback?code=test");
 
@@ -119,7 +119,7 @@ public class AuthControllerTests : BaseApplicationTests
         var response = await _httpClient.GetAsync("/api/auth/validate");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        
+
         var body = await response.Content.ReadFromJsonAsync<JwtDto>();
         body!.Token.Should().Be(tokenResponse.Token);
         body!.ExpiresIn.Should().BeLessThan(tokenResponse.ExpiresIn);

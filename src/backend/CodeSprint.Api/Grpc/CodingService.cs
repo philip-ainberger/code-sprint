@@ -74,7 +74,7 @@ public class CodingService(
     public override async Task<Empty> SolvedSprint(SolvedSprintRequest request, ServerCallContext context)
     {
         await CompletedSprintAsync(request.Id, true);
-        
+
         return new Empty();
     }
 

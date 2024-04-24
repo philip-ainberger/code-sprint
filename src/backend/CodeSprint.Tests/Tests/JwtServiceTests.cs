@@ -15,11 +15,11 @@ public class JwtServiceTests
     public JwtServiceTests()
     {
         _optionsMock = new Mock<IOptions<JwtOptions>>();
-        _optionsMock.Setup(o => o.Value).Returns(new JwtOptions 
-            { 
-                AccessTokensKey = "HMkm9Q8K9ztjhsjbccjfE1BZggliMqY8FpNW5vWRbLZgsveg55Jnv1iPRKTsS62s",
-                RefreshTokensKey = "23e7251e6f6ccf687621b8540c3ad4d214429e06aba6dda0bb3c1db28a071388"
-            }
+        _optionsMock.Setup(o => o.Value).Returns(new JwtOptions
+        {
+            AccessTokensKey = "HMkm9Q8K9ztjhsjbccjfE1BZggliMqY8FpNW5vWRbLZgsveg55Jnv1iPRKTsS62s",
+            RefreshTokensKey = "23e7251e6f6ccf687621b8540c3ad4d214429e06aba6dda0bb3c1db28a071388"
+        }
         );
 
         _jwtService = new JwtService(_optionsMock.Object);

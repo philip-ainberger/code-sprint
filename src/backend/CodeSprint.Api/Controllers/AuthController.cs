@@ -1,14 +1,14 @@
-﻿using CodeSprint.Common.Options;
-using CodeSprint.Core.Repositories;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using CodeSprint.Common.Extensions;
+﻿using CodeSprint.Api.Services;
 using CodeSprint.Common.Dtos;
+using CodeSprint.Common.Extensions;
 using CodeSprint.Common.Jwt;
+using CodeSprint.Common.Options;
+using CodeSprint.Core.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
-using CodeSprint.Api.Services;
 
 namespace CodeSprint.Api.Controllers;
 
@@ -75,14 +75,14 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(refreshToken)) return Unauthorized("Refresh token is missing");
 
         var validationResult = await _jwtService.ValidateRefreshTokenAsync(refreshToken);
-        if(!validationResult.IsValid) return Unauthorized("Invalid refresh token");
+        if (!validationResult.IsValid) return Unauthorized("Invalid refresh token");
 
         var token = _jwtService.ReadTokenAsync(refreshToken);
 
-        if(!Guid.TryParse(token.Subject, out Guid userId)) return Unauthorized("Token contains invalid subject");
+        if (!Guid.TryParse(token.Subject, out Guid userId)) return Unauthorized("Token contains invalid subject");
 
         var entityToken = await _refreshTokenRepository.GetByUserIdAsync(userId);
-        if (entityToken.Token != refreshToken) return Unauthorized("Invalid refresh token"); 
+        if (entityToken.Token != refreshToken) return Unauthorized("Invalid refresh token");
 
         var newJwtToken = _jwtService.BuildJwt(userId);
         var newRefreshToken = _jwtService.BuildRefreshJwt(userId);

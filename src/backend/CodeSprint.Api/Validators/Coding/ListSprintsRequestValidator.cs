@@ -10,7 +10,7 @@ public class ListSprintsRequestValidator : BaseRequestValidator<ListSprintsReque
         RuleFor(c => c.Filter.Languages)
             .NotNull()
             .When(c => c.Filter != null);
-        
+
         RuleFor(c => c.Filter.Tags)
             .NotNull()
             .When(c => c.Filter != null);

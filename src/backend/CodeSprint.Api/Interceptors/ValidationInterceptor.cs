@@ -1,18 +1,13 @@
 ﻿using CodeSprint.Common.Exceptions;
 using FluentValidation;
-using Grpc.Core.Interceptors;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 
 namespace CodeSprint.Api.Interceptors;
 
-public class ValidationInterceptor : Interceptor
+public class ValidationInterceptor(ILogger<ValidationInterceptor> logger) : Interceptor
 {
-    private readonly ILogger<ValidationInterceptor> _logger;
-
-    public ValidationInterceptor(ILogger<ValidationInterceptor> logger)
-    {
-        _logger = logger;
-    }
+    private readonly ILogger<ValidationInterceptor> _logger = logger;
 
     public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
         TRequest request,

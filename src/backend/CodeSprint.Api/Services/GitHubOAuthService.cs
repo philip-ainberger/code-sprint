@@ -1,5 +1,4 @@
-﻿using CodeSprint.Common;
-using CodeSprint.Common.Dtos;
+﻿using CodeSprint.Common.Dtos;
 using CodeSprint.Common.Options;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;

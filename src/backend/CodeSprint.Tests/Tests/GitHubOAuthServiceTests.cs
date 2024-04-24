@@ -1,11 +1,11 @@
 ﻿using CodeSprint.Api.Services;
-using CodeSprint.Common.Options;
-using Microsoft.Extensions.Options;
-using Moq.Protected;
-using Moq;
-using System.Net;
-using FluentAssertions;
 using CodeSprint.Common.Dtos;
+using CodeSprint.Common.Options;
+using FluentAssertions;
+using Microsoft.Extensions.Options;
+using Moq;
+using Moq.Protected;
+using System.Net;
 using System.Text.Json;
 
 namespace CodeSprint.Tests.Tests;

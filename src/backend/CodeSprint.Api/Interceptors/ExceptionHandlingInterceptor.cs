@@ -1,6 +1,6 @@
 ﻿using CodeSprint.Common.Exceptions;
-using Grpc.Core.Interceptors;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 
 namespace CodeSprint.Api.Interceptors;
 

@@ -113,7 +113,7 @@ public class UserRefRepositoryTests : IDisposable
         result.Should().NotBeNull();
         result.Name.Should().Be(updatedModel.Name);
     }
-    
+
     public void Dispose()
     {
         Dispose(true);

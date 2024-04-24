@@ -41,7 +41,7 @@ public static class CodingMapExtensions
             proto.Tags.Select(c => Guid.Parse(c.Id)).ToArray()
         );
     }
-    
+
     public static Core.Models.Sprint ToEntity(this Common.Grpc.Coding.CreateSprintRequest proto, Guid userId, ITaggingRepository taggingRepository)
     {
         return new Core.Models.Sprint(

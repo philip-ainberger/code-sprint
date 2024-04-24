@@ -22,7 +22,7 @@ public static class TaggingMapExtensions
             proto.Name
         );
     }
-    
+
 
     public static Core.Models.Tag ToEntity(this Common.Grpc.Tagging.Tag proto)
     {
