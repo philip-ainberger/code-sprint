@@ -125,12 +125,12 @@ public class AuthControllerTests : BaseApplicationTest
         body!.ExpiresIn.Should().BeLessThan(tokenResponse.ExpiresIn);
     }
 
-    private void AssertHttpStatus(HttpResponseMessage response, HttpStatusCode expectedStatus)
+    private static void AssertHttpStatus(HttpResponseMessage response, HttpStatusCode expectedStatus)
     {
         response.StatusCode.Should().Be(expectedStatus);
     }
 
-    private void AssertHeaderForCookie(HttpResponseMessage response)
+    private static void AssertHeaderForCookie(HttpResponseMessage response)
     {
         response.Headers.Should().Contain(c => c.Key == "Set-Cookie" && c.Value.Count() == 2);
         var jwt = ExtractJwtFromCookie(response.Headers.First(c => c.Key == "Set-Cookie").Value.Last());

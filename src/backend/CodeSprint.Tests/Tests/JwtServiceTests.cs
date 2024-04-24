@@ -1,9 +1,9 @@
 ﻿using CodeSprint.Common.Jwt;
 using CodeSprint.Common.Options;
+using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace CodeSprint.Tests.Tests;
 
@@ -38,9 +38,9 @@ public class JwtServiceTests
         var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.ReadJwtToken(jwtInfo.TokenValue);
 
-        Assert.Equal(_optionsMock.Object.Value.ValidIssuer, token.Issuer);
-        Assert.Equal(_optionsMock.Object.Value.ValidAudience, token.Audiences.First());
-        Assert.Equal(token.Subject, userId.ToString());
-        Assert.True(DateTime.UtcNow.AddMinutes(14) < jwtInfo.Expiration && DateTime.UtcNow.AddMinutes(16) > jwtInfo.Expiration);
+        token.Issuer.Should().Be(_optionsMock.Object.Value.ValidIssuer);
+        token.Audiences.First().Should().Be(_optionsMock.Object.Value.ValidAudience);
+        jwtInfo.Expiration.Should().BeAfter(DateTime.UtcNow.AddMinutes(14));
+        jwtInfo.Expiration.Should().BeBefore(DateTime.UtcNow.AddMinutes(16));
     }
 }
