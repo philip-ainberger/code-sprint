@@ -1,0 +1,46 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    paths: 
+      - 'src/backend/**'
+    branches:
+      - master
+
+env:
+  IMAGE_NAME: ${{ secrets.CI_REGISTRY_IMAGE }}
+  TIMESTAMP: ${{ steps.date.outputs.date }}
+
+jobs:
+  build_and_push_image:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Registry
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.CI_REGISTRY_USER }}
+          password: ${{ secrets.CI_REGISTRY_PAT }}
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./src/backend/
+          file: ./src/backend/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ env.TIMESTAMP }}-${{ github.sha }}
