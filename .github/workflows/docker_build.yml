@@ -8,10 +8,6 @@ on:
     branches:
       - master
 
-env:
-  IMAGE_NAME: ${{ secrets.CI_REGISTRY_IMAGE }}
-  TIMESTAMP: ${{ steps.date.outputs.date }}
-
 jobs:
   build_and_push_image:
     runs-on: ubuntu-latest
@@ -36,12 +32,11 @@ jobs:
 
       - name: Get current date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+        run: echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: ./src/backend/
-          file: ./src/backend/Dockerfile
-          push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ env.TIMESTAMP }}-${{ github.sha }}
+        run: |
+          echo "Building image ${{ secrets.CI_REGISTRY_IMAGE }}:$TIMESTAMP-${{ github.sha }}"
+          cd ./src/backend/
+          docker build -t ${{ secrets.CI_REGISTRY_IMAGE }}:$TIMESTAMP-${{ github.sha }} -f Dockerfile .
+          docker push ${{ secrets.CI_REGISTRY_IMAGE }}:$TIMESTAMP-${{ github.sha }}
