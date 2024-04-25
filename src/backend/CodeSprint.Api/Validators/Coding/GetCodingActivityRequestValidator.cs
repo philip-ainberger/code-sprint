@@ -6,7 +6,7 @@ namespace CodeSprint.Api.Validators.Coding
     {
         public GetCodingActivityRequestValidator()
         {
-            
+
         }
     }
 }

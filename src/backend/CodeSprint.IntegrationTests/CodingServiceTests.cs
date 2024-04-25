@@ -263,7 +263,7 @@ public class CodingServiceTests(ApiWebApplicationFactory<Program> factory) : Bas
 
         // Assert
         await act.Should().NotThrowAsync();
-        
+
         var collection = _mongoCollectionProvider.GetCollection<Core.Models.Sprint>("sprints");
         var entity = collection.AsQueryable().First(c => c.Id == sprint.Id);
         entity.SolvedCount.Should().Be(1);

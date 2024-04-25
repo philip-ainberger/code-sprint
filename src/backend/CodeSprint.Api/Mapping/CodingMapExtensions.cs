@@ -25,7 +25,7 @@ public static class CodingMapExtensions
             Tags = { taggingRepository.ResolveTagsById(model.Tags, model.UserId).Select(TaggingMapExtensions.ToProto) }
         };
     }
-    
+
     public static Common.Grpc.Coding.GetCodingActivityResponse ToProtoResponse(this IDictionary<DateTime, int> entity)
     {
         return new Common.Grpc.Coding.GetCodingActivityResponse()
