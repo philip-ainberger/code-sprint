@@ -21,6 +21,7 @@ public class GitHubOAuthServiceTests
         ClientId = "clientId",
         ClientSecret = "clientSecret",
         OAuthAccessTokenEndpoint = "https://api.github.com/oauth/access_token",
+        OAuthClientAuthorizationEndpoint = "https://github.com/login/oauth/authorize",
         UserApiEndpoint = "https://api.github.com/user"
     };
 
@@ -120,5 +121,15 @@ public class GitHubOAuthServiceTests
             .Invoking(y => y.GetBearerTokenAsync(authorizationCode, _defaultOptions.ClientId, _defaultOptions.ClientSecret))
             .Should().ThrowAsync<InvalidOperationException>()
             .WithMessage("Failed to retrieve access token!");
+    }
+
+    [Fact]
+    public void GetGitHubClientAuthorizationUri_ValidOptionValues_BuildCorrectUri()
+    {
+        // Act
+        var uri = _gitHubOAuthService.GetGitHubClientAuthorizationUri();
+
+        // Assert
+        uri.Should().Be($"{_defaultOptions.OAuthClientAuthorizationEndpoint}?client_id={_defaultOptions.ClientId}&scope=user%3Aemail");
     }
 }

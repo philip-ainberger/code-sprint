@@ -6,4 +6,5 @@ public interface IGitHubOAuthService
 {
     Task<string> GetBearerTokenAsync(string authorizationCode, string clientId, string clientSecret);
     Task<GitHubUserInfoDto> GetUserInfoAsync(string bearerToken);
+    Uri GetGitHubClientAuthorizationUri();
 }

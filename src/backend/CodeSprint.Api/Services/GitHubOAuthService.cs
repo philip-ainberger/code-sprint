@@ -1,5 +1,6 @@
 ﻿using CodeSprint.Common.Dtos;
 using CodeSprint.Common.Options;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 
@@ -14,6 +15,19 @@ public class GitHubOAuthService : IGitHubOAuthService
     {
         _options = options.Value;
         _httpClientFactory = httpClientFactory;
+    }
+
+    public Uri GetGitHubClientAuthorizationUri()
+    {
+        var queryParams = new Dictionary<string, string>()
+        {
+            { "client_id", _options.ClientId },
+            { "scope", "user:email" }
+        };
+
+        var uri = new QueryBuilder(queryParams);
+
+        return new Uri(new Uri(_options.OAuthClientAuthorizationEndpoint), uri.ToQueryString().Value!);
     }
 
     public async Task<string> GetBearerTokenAsync(string authorizationCode, string clientId, string clientSecret)

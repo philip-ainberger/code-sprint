@@ -90,7 +90,7 @@ public static class SetupExtensions
             options.AddPolicy("AllowAngularDev",
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200")
+                    builder.WithOrigins("https://localhost:4200")
                            .AllowAnyMethod()
                            .AllowCredentials()
                            .AllowAnyHeader();

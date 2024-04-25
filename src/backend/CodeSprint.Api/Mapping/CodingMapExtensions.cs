@@ -25,6 +25,14 @@ public static class CodingMapExtensions
             Tags = { taggingRepository.ResolveTagsById(model.Tags, model.UserId).Select(TaggingMapExtensions.ToProto) }
         };
     }
+    
+    public static Common.Grpc.Coding.GetCodingActivityResponse ToProtoResponse(this IDictionary<DateTime, int> entity)
+    {
+        return new Common.Grpc.Coding.GetCodingActivityResponse()
+        {
+            Activities = { entity.Select(c => new Common.Grpc.Coding.CodingActivity() { Timestamp = c.Key.ToTimestamp(), Count = c.Value }) }
+        };
+    }
 
     public static Core.Models.Sprint ToEntity(this Common.Grpc.Coding.CreateSprintRequest proto, Guid userId, ITaggingRepository taggingRepository)
     {

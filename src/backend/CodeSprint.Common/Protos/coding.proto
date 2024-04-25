@@ -41,11 +41,18 @@ message Filter {
 	string fulltext_search = 3;
 }
 
+message CodingActivity {
+	google.protobuf.Timestamp timestamp = 1;
+	int32 count = 2;
+}
+
 service CodingGrpcService {
 	rpc CreateSprint(CreateSprintRequest) returns (CreateSprintResponse) {}
 
 	rpc GetSprint(GetSprintRequest) returns (Sprint) {}
-  
+	
+	rpc GetCodingActivity(GetCodingActivityRequest) returns (GetCodingActivityResponse) {}
+
 	rpc UpdateSprint(UpdateSprintRequest) returns (UpdateSprintResponse) {}
   
 	rpc DeleteSprint(DeleteSprintRequest) returns (google.protobuf.Empty) {}
@@ -108,4 +115,11 @@ message ListSprintsRequest {
 message ListSprintsResponse {
 	repeated Sprint sprints = 1;
 	uint32 total_count = 2;
+}
+
+message GetCodingActivityRequest {
+}
+
+message GetCodingActivityResponse {
+	repeated CodingActivity activities = 1;
 }

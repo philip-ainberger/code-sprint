@@ -103,12 +103,25 @@ public class CodingService(
         };
     }
 
+    public override Task<GetCodingActivityResponse> GetCodingActivity(GetCodingActivityRequest request, ServerCallContext context)
+    {
+        var activities = _sprintActivityRepository.GetActivities(_userId);
+
+        return Task.FromResult(activities.ToProtoResponse());
+    }
+
     private async Task CompletedSprintAsync(string id, bool successfull)
     {
         var entity = await _repository.GetByIdAsync(_userId, Guid.Parse(id));
 
         if (entity == null)
             throw new EntityNotFoundException(string.Format("Could not find sprint '{0}'", id));
+
+        entity = successfull
+            ? entity with { SolvedCount = entity.SolvedCount + 1 }
+            : entity with { FailedCount = entity.FailedCount + 1 };
+
+        await _repository.UpdateAsync(_userId, entity);
 
         await _sprintActivityRepository.AddAsync(_userId, new SprintActivity(Guid.NewGuid(), _userId, Guid.Parse(id), DateTime.UtcNow, successfull));
     }

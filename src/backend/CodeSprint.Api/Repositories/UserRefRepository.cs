@@ -6,7 +6,7 @@ namespace CodeSprint.Api.Repositories;
 
 public abstract class UserRefRepository<T> : IUserRefRepository<T> where T : BaseUserRefModel
 {
-    private readonly IMongoCollection<T> _collection;
+    protected readonly IMongoCollection<T> _collection;
 
     protected UserRefRepository(IMongoCollection<T> collection)
     {

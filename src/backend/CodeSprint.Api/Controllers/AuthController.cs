@@ -36,6 +36,12 @@ public class AuthController : ControllerBase
         _jwtService = jwtBuilder;
     }
 
+    [HttpGet("github-auth")]
+    public IActionResult RedirectToGitHubClientAuthorization()
+    {
+        return Redirect(_gitHubOAuthService.GetGitHubClientAuthorizationUri().ToString());
+    }
+
     [HttpGet("callback")]
     public async Task<IActionResult> GitHubCallback([FromQuery] string? code)
     {
@@ -51,7 +57,7 @@ public class AuthController : ControllerBase
         await _refreshTokenRepository.AddOrOverrideAsync(userId, jwtToken.TokenValue);
 
         HttpContext.AddRefreshTokenToCookie(jwtToken.TokenValue);
-        return Redirect($"http://localhost:4200/");
+        return Redirect($"https://localhost:4200/");
     }
 
     [Authorize]

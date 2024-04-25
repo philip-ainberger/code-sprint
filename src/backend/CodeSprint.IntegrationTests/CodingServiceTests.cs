@@ -263,6 +263,10 @@ public class CodingServiceTests(ApiWebApplicationFactory<Program> factory) : Bas
 
         // Assert
         await act.Should().NotThrowAsync();
+        
+        var collection = _mongoCollectionProvider.GetCollection<Core.Models.Sprint>("sprints");
+        var entity = collection.AsQueryable().First(c => c.Id == sprint.Id);
+        entity.SolvedCount.Should().Be(1);
     }
 
     [Fact]
@@ -279,6 +283,10 @@ public class CodingServiceTests(ApiWebApplicationFactory<Program> factory) : Bas
 
         // Assert
         await act.Should().NotThrowAsync();
+
+        var collection = _mongoCollectionProvider.GetCollection<Core.Models.Sprint>("sprints");
+        var entity = collection.AsQueryable().First(c => c.Id == sprint.Id);
+        entity.FailedCount.Should().Be(1);
     }
 
     private static void AssertTag(Common.Grpc.Tagging.Tag responseTag, Core.Models.Tag tag)
