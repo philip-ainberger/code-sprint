@@ -8,10 +8,10 @@ namespace CodeSprint.Api.Services;
 
 public class GitHubOAuthService : IGitHubOAuthService
 {
-    private readonly GithubOAuthOptions _options;
+    private readonly GitHubOAuthOptions _options;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public GitHubOAuthService(IOptions<GithubOAuthOptions> options, IHttpClientFactory httpClientFactory)
+    public GitHubOAuthService(IOptions<GitHubOAuthOptions> options, IHttpClientFactory httpClientFactory)
     {
         _options = options.Value;
         _httpClientFactory = httpClientFactory;

@@ -13,10 +13,10 @@ namespace CodeSprint.Tests.Tests;
 public class GitHubOAuthServiceTests
 {
     private readonly GitHubOAuthService _gitHubOAuthService;
-    private readonly Mock<IOptions<GithubOAuthOptions>> _optionsMock;
+    private readonly Mock<IOptions<GitHubOAuthOptions>> _optionsMock;
     private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
     private readonly Mock<HttpMessageHandler> _httpMessageHandlerMock;
-    private readonly GithubOAuthOptions _defaultOptions = new()
+    private readonly GitHubOAuthOptions _defaultOptions = new()
     {
         ClientId = "clientId",
         ClientSecret = "clientSecret",
@@ -27,7 +27,7 @@ public class GitHubOAuthServiceTests
 
     public GitHubOAuthServiceTests()
     {
-        _optionsMock = new Mock<IOptions<GithubOAuthOptions>>();
+        _optionsMock = new Mock<IOptions<GitHubOAuthOptions>>();
         _httpClientFactoryMock = new Mock<IHttpClientFactory>();
         _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
 

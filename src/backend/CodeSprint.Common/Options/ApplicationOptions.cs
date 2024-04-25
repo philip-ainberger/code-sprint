@@ -1,8 +1,11 @@
-﻿namespace CodeSprint.Common.Options;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CodeSprint.Common.Options;
 
 public class ApplicationOptions
 {
-    public const string Section = "Application";
+    public const string AppSettingsSection = "Application";
 
+    [Required]
     public required string HostedClientUrl { get; set; }
 }

@@ -20,7 +20,7 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
 {
     private readonly ApplicationOptions _defaultApplicationOptions = new() { HostedClientUrl = "https://localhost:4200" };
     private readonly MongoDbRunner _mongoRunner;
-    private readonly GithubOAuthOptions _defaultGitHubOptions = new()
+    private readonly GitHubOAuthOptions _defaultGitHubOptions = new()
     {
         ClientId = "clientId",
         ClientSecret = "clientSecret",
@@ -34,6 +34,7 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
         RefreshTokensKey = "23e7251e6f6ccf687621b8540c3ad4d214429e06aba6dda0bb3c1db28a071388"
     };
 
+    public const string DEFAULT_DOMAIN = "integration-tests.com";
     public string MongoConnectionString => _mongoRunner.ConnectionString;
 
     public ApiWebApplicationFactory()
@@ -55,7 +56,8 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
                     Jwt = _defaultOptions,
                     Application = _defaultApplicationOptions,
                     GitHub = _defaultGitHubOptions
-                }
+                },
+                AllowedHosts = DEFAULT_DOMAIN
             };
 
             var json = JsonSerializer.Serialize(config);
@@ -109,6 +111,7 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
     protected override void ConfigureClient(HttpClient client)
     {
         base.ConfigureClient(client);
+        client.DefaultRequestHeaders.Host = DEFAULT_DOMAIN;
         client.DefaultRequestHeaders.Add("Origin", _defaultApplicationOptions.HostedClientUrl);
     }
 

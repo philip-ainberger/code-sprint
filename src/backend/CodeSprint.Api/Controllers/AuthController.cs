@@ -16,14 +16,14 @@ namespace CodeSprint.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly GithubOAuthOptions _gitHubOptions;
+    private readonly GitHubOAuthOptions _gitHubOptions;
     private readonly IUserRepository _userRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IGitHubOAuthService _gitHubOAuthService;
     private readonly IJwtService _jwtService;
 
     public AuthController(
-        IOptions<GithubOAuthOptions> gitHubOptions,
+        IOptions<GitHubOAuthOptions> gitHubOptions,
         IUserRepository userRepository,
         IRefreshTokenRepository refreshTokenRepository,
         IGitHubOAuthService gitHubOAuthService,

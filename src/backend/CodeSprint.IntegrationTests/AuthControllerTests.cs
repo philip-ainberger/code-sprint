@@ -34,14 +34,13 @@ public class AuthControllerTests : BaseApplicationTests
     [Fact]
     public async Task RedirectToGitHubClientAuthorization_InvalidOrigin_ReturnsUnauthorized()
     {
-        _httpClient.DefaultRequestHeaders.Remove("Origin");
-        _httpClient.DefaultRequestHeaders.Add("Origin", "http://invalid.com");
+        _httpClient.DefaultRequestHeaders.Host = "malicious.com";
 
         // Act
         var redirectResult = await _httpClient.GetAsync("/api/auth/github-auth");
 
         // Assert
-        AssertHttpStatus(redirectResult, HttpStatusCode.Forbidden);
+        AssertHttpStatus(redirectResult, HttpStatusCode.BadRequest);
     }
 
     [Fact]

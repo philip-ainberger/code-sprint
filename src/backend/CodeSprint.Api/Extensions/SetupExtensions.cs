@@ -1,4 +1,5 @@
 ﻿using CodeSprint.Api.Repositories;
+using CodeSprint.Api.Services;
 using CodeSprint.Common;
 using CodeSprint.Common.Jwt;
 using CodeSprint.Common.Options;
@@ -16,10 +17,31 @@ public static class SetupExtensions
     {
         var customSection = configuration.GetSection("Custom");
 
-        services.Configure<MongoOptions>(customSection.GetSection(MongoOptions.Section));
-        services.Configure<GithubOAuthOptions>(customSection.GetSection(GithubOAuthOptions.Section));
-        services.Configure<JwtOptions>(customSection.GetSection(JwtOptions.Section));
-        services.Configure<ApplicationOptions>(customSection.GetSection(ApplicationOptions.Section));
+        services.AddCustomOptionWithValidation<MongoOptions>(customSection, MongoOptions.AppSettingsSection);
+        services.AddCustomOptionWithValidation<GitHubOAuthOptions>(customSection, GitHubOAuthOptions.AppSettingsSection);
+        services.AddCustomOptionWithValidation<JwtOptions>(customSection, JwtOptions.AppSettingsSection);
+        services.AddCustomOptionWithValidation<ApplicationOptions>(customSection, ApplicationOptions.AppSettingsSection);
+    }
+
+    public static void AddCustomOptionWithValidation<T>(this IServiceCollection services, IConfigurationSection baseSection, string sectionName) where T : class
+    {
+        services.AddOptions<T>()
+            .Bind(baseSection.GetSection(sectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+    }
+
+    public static void ValidateRequiredFrameworkSettings(this ConfigurationManager configuration)
+    {
+        if (string.IsNullOrEmpty(configuration["AllowedHosts"]))
+            throw new InvalidOperationException("[AllowedHosts] setting must be configured.");
+    }
+
+    public static void AddCustomServices(this IServiceCollection services)
+    {
+        services
+            .AddScoped<IGitHubOAuthService, GitHubOAuthService>()
+            .AddScoped<ISessionProviderService, SessionProviderService>();
     }
 
     public static void AddCustomJwtAuthentication(this IServiceCollection services)
