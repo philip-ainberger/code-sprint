@@ -1,0 +1,94 @@
+<div class="relative w-full border-light-l2 dark:border-dark-l2 border-2 rounded-md mb-4 flex flex-col gap-4">
+    <div *ngIf="!working" [ngClass]="solved ? 'text-green-600' : 'text-red-600'"
+        class="w-full h-full bg-dark-l1/70 absolute flex justify-center items-center text-xl font-semibold">
+        <app-animated-number [endValue]="finalPercentage"></app-animated-number>
+        %
+    </div>
+    <div class="w-full h-full p-4">
+        <div class="flex w-full">
+            <div>
+                <h2 class="text-xl font-medium mb-2">{{sprint?.title}}</h2>
+                <p class="ml-2 text-sm">
+                    {{sprint?.description}}
+                </p>
+            </div>
+            <div class="ml-auto flex flex-row justify-center items-start gap-4">
+                <div class="flex flex-row justify-center items-center">
+                    <app-custom-badge [label]="languages[sprint?.language ?? 0]" />
+                </div>
+                <div class="flex gap-1 text-green-600">
+                    <ng-icon class="text-xl" name="heroCheckBadgeSolid"></ng-icon>
+                    <p>{{sprint?.solvedCount}}</p>
+                </div>
+                <div class="flex gap-1 text-red-600">
+                    <ng-icon class="text-xl" name="heroXMarkSolid"></ng-icon>
+                    <p>{{sprint?.failedCount}}</p>
+                </div>
+                <div class="flex gap-1">
+                    <ng-icon class="text-xl" name="heroWrenchSolid"></ng-icon>
+                    <p *ngIf="sprint !== undefined">{{sprint!.solvedCount + sprint!.failedCount}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-row items-center gap-3 mt-2">
+            <button class="button-with-icon" (click)="reset()">
+                <ng-icon name="heroArrowPathSolid"></ng-icon>
+                <p>Reset</p>
+            </button>
+            <button class="button-with-icon" (click)="complete()">
+                <ng-icon name="heroCheckBadgeSolid"></ng-icon>
+                <p>Complete</p>
+            </button>
+            <!-- <button class="button-with-icon" data-hs-overlay="#hs-overlay-right">
+                <ng-icon name="heroInformationCircleSolid"></ng-icon>
+                <p>History</p>
+            </button> -->
+
+            <div class="ml-auto flex gap-4">
+                <div class="justify-self-end flex flex-row justify-center items-center gap-2 text-xs">
+                    @for (tag of sprint?.tags; track tag.id)
+                    {
+                        <app-custom-badge [label]="tag.name" />
+                    }
+                </div>
+
+                <div class="ml-auto flex gap-1">
+                    <ng-icon class="text-xl" name="heroCalendarSolid"></ng-icon>
+                    <p>{{createdAt?.toLocaleDateString()}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="w-full h-full max-h-editor rounded-md p-4 border-light-l2 border-2 dark:border-0">
+    <ngx-monaco-editor *ngIf="working" class="editor w-full full-height" [options]="editorOptions" [(ngModel)]="code">
+    </ngx-monaco-editor>
+
+    <ngx-monaco-diff-editor *ngIf="!working" class="editor w-full full-height" [options]="editorOptions"
+        [originalModel]="originalModel" [modifiedModel]="modifiedModel">
+    </ngx-monaco-diff-editor>
+</div>
+
+
+<div id="hs-overlay-right"
+    class="hs-overlay-backdrop-open:bg-transparent hs-overlay hs-overlay-open:translate-x-0 hidden translate-x-full fixed top-0 end-0 transition-all duration-300 transform h-full max-w-sm w-full z-[80] bg-dark-l2"
+    tabindex="-1">
+
+    <div class="flex justify-between items-center py-3 px-4 border-b dark:border-neutral-700">
+        <h3 class="font-bold ">
+            Timeline
+        </h3>
+
+        <button type="button" class="hs-tooltip-toggle ml-2 icon-button" data-hs-overlay="#hs-overlay-right">
+            <ng-icon name="heroXMarkSolid"></ng-icon>
+        </button>
+
+    </div>
+    <div class="p-4">
+        <p class="">
+            Coming soon ...
+        </p>
+    </div>
+</div>

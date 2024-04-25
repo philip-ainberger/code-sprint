@@ -1,0 +1,69 @@
+<svg
+  x="0"
+  y="0"
+  [attr.width]="getWidthHeatMap()"
+  [attr.height]="getHeigthHeatMap()"
+>
+  @if (showMonthLabel) {
+    <svg x="0" y="0" [attr.height]="heightLabel">
+      @for (
+        week of getWeeksCount() | getRange;
+        track week;
+        let weekIndex = $index
+      ) {
+        @if (
+          (weekIndex | getEndDayOfWeekTime: startDate).getDate() >= 1 &&
+          (weekIndex | getEndDayOfWeekTime: startDate).getDate() <= daysInWeek
+        ) {
+          <g
+            ngx-heatmap-month
+            [index]="weekIndex"
+            [rectSize]="rectSize"
+            [gap]="gap"
+          >
+            {{ getMonthLabel(weekIndex) }}
+          </g>
+        }
+      }
+    </svg>
+  }
+  <svg [attr.x]="widthLabel" [attr.y]="heightLabel">
+    @for (
+      week of getWeeksCount() | getRange;
+      track week;
+      let weekIndex = $index
+    ) {
+      @for (day of daysInWeek | getRange; track day; let dayIndex = $index) {
+        @if (!checkIfDateIsOutRange(weekIndex, dayIndex)) {
+          <g
+            ngx-heatmap-cell
+            [weekIndex]="weekIndex"
+            [rectSize]="rectSize"
+            [gap]="gap"
+            [dayIndex]="dayIndex"
+            [data]="generateDataForCell(getIndexInDays(weekIndex, dayIndex))"
+            (onClickCell)="onClickCell.emit($event)"
+            (onMouseEnterCell)="onMouseEnterCell.emit($event)"
+            (onMouseLeaveCell)="onMouseLeaveCell.emit($event)"
+          ></g>
+        }
+      }
+    }
+  </svg>
+
+  @if (showDayLabel) {
+    <svg x="0" [attr.y]="heightLabel" class="heat-map-day-labels">
+      @for (day of daysInWeek | getRange; track day; let dayIndex = $index) {
+        @if (dayIndex % 2 === 0) {
+          <g
+            ngx-heatmap-label
+            [rectSize]="rectSize"
+            [label]="getDayLabel(dayIndex)"
+            [gap]="gap"
+            [index]="dayIndex"
+          ></g>
+        }
+      }
+    </svg>
+  }
+</svg>

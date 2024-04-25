@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate-proto": ".//scripts//generate-proto-services.sh"
+    "generate-proto": ".\\scripts\\generate-proto-services.bat"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +24,7 @@
     "@ng-icons/octicons": "^27.3.1",
     "@protobuf-ts/grpcweb-transport": "^2.9.4",
     "@protobuf-ts/plugin": "^2.9.4",
+    "@tailwindcss/forms": "^0.5.7",
     "google-protobuf": "^3.21.2",
     "grpc-tools": "^1.12.4",
     "grpc-web": "^1.5.0",
