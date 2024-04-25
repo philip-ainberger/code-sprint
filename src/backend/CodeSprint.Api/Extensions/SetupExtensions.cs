@@ -14,11 +14,15 @@ public static class SetupExtensions
 {
     public static void AddCustomOptions(this IServiceCollection services, ConfigurationManager configuration)
     {
-        services.Configure<MongoOptions>(configuration.GetSection(MongoOptions.Section));
-        services.Configure<GithubOAuthOptions>(configuration.GetSection(GithubOAuthOptions.Section));
-        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Section));
+        var customSection = configuration.GetSection("Custom");
+
+        services.Configure<MongoOptions>(customSection.GetSection(MongoOptions.Section));
+        services.Configure<GithubOAuthOptions>(customSection.GetSection(GithubOAuthOptions.Section));
+        services.Configure<JwtOptions>(customSection.GetSection(JwtOptions.Section));
+        services.Configure<ApplicationOptions>(customSection.GetSection(ApplicationOptions.Section));
     }
-    public static void AddCustomJwtAuthentication(this IServiceCollection services, ConfigurationManager configuration)
+
+    public static void AddCustomJwtAuthentication(this IServiceCollection services)
     {
         services.AddScoped<IJwtService, JwtService>();
 
@@ -26,12 +30,10 @@ public static class SetupExtensions
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var jwtOptions = configuration
-                    .GetSection("Jwt")
-                    .Get<JwtOptions>();
-
-                if (jwtOptions == null || string.IsNullOrEmpty(jwtOptions.AccessTokensKey))
-                    throw new ArgumentException("");
+                var jwtOptions = services
+                    .BuildServiceProvider()
+                    .GetRequiredService<IOptions<JwtOptions>>()
+                    .Value!;
 
                 options.TokenValidationParameters = Defaults.GetDefaultTokenValidationParameters(
                     jwtOptions.AccessTokensKey,
@@ -87,10 +89,21 @@ public static class SetupExtensions
     {
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAngularDev",
+            var applicationOptions = services
+                .BuildServiceProvider()
+                .GetRequiredService<IOptions<ApplicationOptions>>()
+                .Value!;
+
+            options.AddPolicy(Environments.Production,
                 builder =>
                 {
-                    builder.WithOrigins("https://localhost:4200")
+                    builder.WithOrigins(applicationOptions.HostedClientUrl);
+                });
+
+            options.AddPolicy(Environments.Development,
+                builder =>
+                {
+                    builder.WithOrigins(applicationOptions.HostedClientUrl)
                            .AllowAnyMethod()
                            .AllowCredentials()
                            .AllowAnyHeader();

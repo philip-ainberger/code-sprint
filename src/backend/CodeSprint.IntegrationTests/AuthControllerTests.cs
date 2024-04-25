@@ -22,13 +22,36 @@ public class AuthControllerTests : BaseApplicationTests
     }
 
     [Fact]
+    public async Task RedirectToGitHubClientAuthorization_RedirectToGitHub_ReturnsCorrectLocation()
+    {
+        // Act
+        var redirectResult = await _httpClient.GetAsync("/api/auth/github-auth");
+
+        // Assert
+        AssertLoginRedirect(redirectResult);
+    }
+
+    [Fact]
+    public async Task RedirectToGitHubClientAuthorization_InvalidOrigin_ReturnsUnauthorized()
+    {
+        _httpClient.DefaultRequestHeaders.Remove("Origin");
+        _httpClient.DefaultRequestHeaders.Add("Origin", "http://invalid.com");
+
+        // Act
+        var redirectResult = await _httpClient.GetAsync("/api/auth/github-auth");
+
+        // Assert
+        AssertHttpStatus(redirectResult, HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
     public async Task AuthCallback_SuccessfulOAuthLogin_RefreshTokenInCookie()
     {
         // Act
         var loginResult = await _httpClient.GetAsync("/api/auth/callback?code=test");
 
         // Assert
-        AssertHttpStatus(loginResult, HttpStatusCode.Found);
+        AssertRedirectAfterCallback(loginResult);
         AssertHeaderForCookie(loginResult);
         AssertSingleUserAndToken();
     }
@@ -44,7 +67,7 @@ public class AuthControllerTests : BaseApplicationTests
         var loginResult = await _httpClient.GetAsync("/api/auth/callback?code=test");
 
         // Arrange
-        AssertHttpStatus(loginResult, HttpStatusCode.Found);
+        AssertRedirectAfterCallback(loginResult);
         AssertTokenRefreshed(previousUpdated);
     }
 
@@ -123,6 +146,18 @@ public class AuthControllerTests : BaseApplicationTests
         var body = await response.Content.ReadFromJsonAsync<JwtDto>();
         body!.Token.Should().Be(tokenResponse.Token);
         body!.ExpiresIn.Should().BeLessThan(tokenResponse.ExpiresIn);
+    }
+
+    private void AssertLoginRedirect(HttpResponseMessage response)
+    {
+        response.StatusCode.Should().Be(HttpStatusCode.Found);
+        response.Headers.Location.Should().Be(new Uri(new Uri(_factory.GetGitHubOAuthClientAuthorizationEndpoint()), $"/?code={_factory.GetGitHubClientId()}"));
+    }
+
+    private void AssertRedirectAfterCallback(HttpResponseMessage response)
+    {
+        response.StatusCode.Should().Be(HttpStatusCode.Found);
+        response.Headers.Location.Should().Be(_factory.GetHostedClientUrl());
     }
 
     private static void AssertHttpStatus(HttpResponseMessage response, HttpStatusCode expectedStatus)

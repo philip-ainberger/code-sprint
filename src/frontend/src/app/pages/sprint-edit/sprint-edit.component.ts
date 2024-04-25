@@ -57,8 +57,9 @@ export class SprintEditPage implements OnInit, AfterViewInit {
         }
       );
   }
+
   ngAfterViewInit(): void {
-    this.adaptTheme(this.themeService.getCurrentTheme());
+    this.adaptEditorOptions(this.themeService.getCurrentTheme());
   }
 
   ngOnInit(): void {
@@ -91,6 +92,8 @@ export class SprintEditPage implements OnInit, AfterViewInit {
             }
           }
 
+          this.updateLanguage();
+
         }), (err) => {
           console.log(err);
         });
@@ -98,11 +101,11 @@ export class SprintEditPage implements OnInit, AfterViewInit {
     });
 
     this.themeService.getTheme().subscribe(theme => {
-      this.adaptTheme(theme);
+      this.adaptEditorOptions(theme);
     });
   }
   
-  adaptTheme(theme: string): void {
+  adaptEditorOptions(theme: string): void {
     if (this.editorComponents) {
       this.editorComponents.forEach(editor => {
         editor!.options = { theme: this.buildEditorTheme(theme), language: this.languages[+this.languageSelectElement().value] };
@@ -116,7 +119,7 @@ export class SprintEditPage implements OnInit, AfterViewInit {
   }
 
   updateLanguage() {
-    this.adaptTheme(this.themeService.getCurrentTheme());
+    this.adaptEditorOptions(this.themeService.getCurrentTheme());
   }
 
   languageSelectElement(): HTMLSelectElement {

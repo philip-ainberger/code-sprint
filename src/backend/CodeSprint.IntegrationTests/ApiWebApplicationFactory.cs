@@ -18,7 +18,16 @@ namespace CodeSprint.IntegrationTests;
 
 public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
+    private readonly ApplicationOptions _defaultApplicationOptions = new() { HostedClientUrl = "https://localhost:4200" };
     private readonly MongoDbRunner _mongoRunner;
+    private readonly GithubOAuthOptions _defaultGitHubOptions = new()
+    {
+        ClientId = "clientId",
+        ClientSecret = "clientSecret",
+        OAuthAccessTokenEndpoint = "https://api.github.com/oauth/access_token",
+        OAuthClientAuthorizationEndpoint = "https://github.com/login/oauth/authorize",
+        UserApiEndpoint = "https://api.github.com/user"
+    };
     private readonly JwtOptions _defaultOptions = new()
     {
         AccessTokensKey = "HMkm9Q8K9ztjhsjbccjfE1BZggliMqY8FpNW5vWRbLZgsveg55Jnv1iPRKTsS62s",
@@ -40,8 +49,13 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
 
             var config = new
             {
-                MongoDb = new MongoOptions() { ConnectionString = _mongoRunner.ConnectionString, DatabaseName = "default" },
-                Jwt = _defaultOptions
+                Custom = new
+                {
+                    MongoDb = new MongoOptions() { ConnectionString = _mongoRunner.ConnectionString, DatabaseName = "default" },
+                    Jwt = _defaultOptions,
+                    Application = _defaultApplicationOptions,
+                    GitHub = _defaultGitHubOptions
+                }
             };
 
             var json = JsonSerializer.Serialize(config);
@@ -66,6 +80,10 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
         });
     }
 
+    internal string GetHostedClientUrl() => _defaultApplicationOptions.HostedClientUrl;
+    internal string GetGitHubOAuthClientAuthorizationEndpoint() => _defaultGitHubOptions.OAuthClientAuthorizationEndpoint;
+    internal string GetGitHubClientId() => _defaultGitHubOptions.ClientId;
+
     internal string GetJwtToken()
     {
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_defaultOptions.AccessTokensKey));
@@ -88,13 +106,19 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
         return jwtTokenHandler.WriteToken(securityToken);
     }
 
+    protected override void ConfigureClient(HttpClient client)
+    {
+        base.ConfigureClient(client);
+        client.DefaultRequestHeaders.Add("Origin", _defaultApplicationOptions.HostedClientUrl);
+    }
+
     protected override void Dispose(bool disposing)
     {
         _mongoRunner.Dispose();
         base.Dispose(disposing);
     }
 
-    private static Mock<IGitHubOAuthService> GetGitHubOAuthServiceMock()
+    private Mock<IGitHubOAuthService> GetGitHubOAuthServiceMock()
     {
         var mock = new Mock<IGitHubOAuthService>();
 
@@ -111,6 +135,9 @@ public class ApiWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup
               Email = "",
               Login = "username"
           });
+
+        mock.Setup(x => x.GetGitHubClientAuthorizationUri())
+            .Returns(new Uri(new Uri(_defaultGitHubOptions.OAuthClientAuthorizationEndpoint), $"/?code={_defaultGitHubOptions.ClientId}"));
 
         return mock;
     }

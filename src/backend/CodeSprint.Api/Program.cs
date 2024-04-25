@@ -1,6 +1,7 @@
 using CodeSprint.Api.Extensions;
 using CodeSprint.Api.Grpc;
 using CodeSprint.Api.Interceptors;
+using CodeSprint.Api.Middlewares;
 using CodeSprint.Api.Services;
 using CodeSprint.Api.Validators;
 using FluentValidation;
@@ -15,9 +16,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddCustomCors();
-builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 builder.Services.AddCustomOptions(builder.Configuration);
+builder.Services.AddCustomCors();
+builder.Services.AddCustomJwtAuthentication();
 
 builder.Services.AddGrpc(options =>
 {
@@ -41,15 +42,11 @@ builder.Services.AddHttpClient();
 // ==== build start
 var app = builder.Build();
 
-app.UseCors("AllowAngularDev");
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseCors(app.Environment.EnvironmentName);
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<OriginRestrictionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -61,7 +58,14 @@ app.MapControllers();
 app.MapGrpcService<CodingService>().EnableGrpcWeb();
 app.MapGrpcService<TaggingService>().EnableGrpcWeb();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.Run();
+
 // ==== build end
 
 public partial class Program
