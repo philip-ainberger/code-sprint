@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { AppConfig } from '../core/app.config';
-import { environment } from '../core/environment';
+import { environment } from '../environments/environment';
 
 @Injectable({
     providedIn: 'root',
