@@ -5,12 +5,23 @@ on:
   push:
     paths: 
       - 'src/backend/**'
+      - 'src/frontend/**'
     branches:
       - master
 
 jobs:
   build_and_push_image:
     runs-on: ubuntu-latest
+
+    strategy:
+        matrix:
+          include:
+            - context: "src/backend"
+              dockerfile: "src/backend/Dockerfile"
+              image_tag: "ainberger/code-sprint-backend"
+            - context: "src/frontend"
+              dockerfile: "src/frontend/Dockerfile"
+              image_tag: "ainberger/code-sprint-frontend"
 
     services:
       docker:
@@ -36,7 +47,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          echo "Building image ${{ secrets.CI_REGISTRY_IMAGE }}:$TIMESTAMP-${{ github.sha }}"
+          echo "Building image ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }}"
           cd ./src/backend/
-          docker build -t ${{ secrets.CI_REGISTRY_IMAGE }}:$TIMESTAMP-${{ github.sha }} -f Dockerfile .
-          docker push ${{ secrets.CI_REGISTRY_IMAGE }}:$TIMESTAMP-${{ github.sha }}
+          docker build -t ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }} -f ${{ matrix.dockerfile }} ${{ matrix.context }}
+          docker push ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }}
