@@ -8,8 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "generate-proto": ".\\scripts\\generate-proto-services.bat",
-    "prebuild:prod": "ts-node -P scripts/tsconfig.scripts.json scripts/prebuild.ts",
-    "build:prod": "npm run prebuild:prod && ng build --configuration production"
+    "build:prod": "ng build --configuration production"
   },
   "private": true,
   "dependencies": {
