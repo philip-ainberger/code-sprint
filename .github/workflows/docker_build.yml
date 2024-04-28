@@ -16,10 +16,10 @@ jobs:
     strategy:
         matrix:
           include:
-            - context: "src/backend"
+            - context: "src/backend/"
               dockerfile: "src/backend/Dockerfile"
               image_tag: "ainberger/code-sprint-backend"
-            - context: "src/frontend"
+            - context: "src/frontend/"
               dockerfile: "src/frontend/Dockerfile"
               image_tag: "ainberger/code-sprint-frontend"
 
