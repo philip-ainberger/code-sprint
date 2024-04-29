@@ -43,13 +43,12 @@ var app = builder.Build();
 
 app.UseCors(app.Environment.EnvironmentName);
 
-app.UseHttpsRedirection();
+app.UseCustomHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseGrpcWeb();
-app.UseHttpsRedirection();
 app.MapControllers();
 
 app.MapGrpcService<CodingService>().EnableGrpcWeb();

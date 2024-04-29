@@ -17,6 +17,7 @@ namespace CodeSprint.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly GitHubOAuthOptions _gitHubOptions;
+    private readonly ApplicationOptions _applicationOptions;
     private readonly IUserRepository _userRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IGitHubOAuthService _gitHubOAuthService;
@@ -24,12 +25,14 @@ public class AuthController : ControllerBase
 
     public AuthController(
         IOptions<GitHubOAuthOptions> gitHubOptions,
+        IOptions<ApplicationOptions> applicationOptions,
         IUserRepository userRepository,
         IRefreshTokenRepository refreshTokenRepository,
         IGitHubOAuthService gitHubOAuthService,
         IJwtService jwtBuilder)
     {
         _gitHubOptions = gitHubOptions.Value;
+        _applicationOptions = applicationOptions.Value;
         _userRepository = userRepository;
         _refreshTokenRepository = refreshTokenRepository;
         _gitHubOAuthService = gitHubOAuthService;
@@ -57,7 +60,8 @@ public class AuthController : ControllerBase
         await _refreshTokenRepository.AddOrOverrideAsync(userId, jwtToken.TokenValue);
 
         HttpContext.AddRefreshTokenToCookie(jwtToken.TokenValue);
-        return Redirect($"https://localhost:4200/");
+        
+        return Redirect(_applicationOptions.HostedClientUrl);
     }
 
     [Authorize]

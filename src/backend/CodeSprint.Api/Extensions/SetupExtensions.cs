@@ -107,6 +107,16 @@ public static class SetupExtensions
             .AddScoped<TRepositoryInterface, TRepositoryImpl>();
     }
 
+    public static IApplicationBuilder UseCustomHttpsRedirection(this IApplicationBuilder app)
+    {
+        var options = app.ApplicationServices.GetRequiredService<IOptions<ApplicationOptions>>();
+
+        if (options.Value.HttpOnly)
+            return app;
+
+        return app.UseHttpsRedirection();
+    }
+
     public static void AddCustomCors(this IServiceCollection services)
     {
         services.AddCors(options =>
@@ -119,16 +129,17 @@ public static class SetupExtensions
             options.AddPolicy(Environments.Production,
                 builder =>
                 {
-                    builder.WithOrigins(applicationOptions.HostedClientUrl);
+                    builder.WithOrigins(new Uri(applicationOptions.HostedClientUrl).Host)
+                        .AllowCredentials();
                 });
 
             options.AddPolicy(Environments.Development,
                 builder =>
                 {
-                    builder.WithOrigins(applicationOptions.HostedClientUrl)
-                           .AllowAnyMethod()
-                           .AllowCredentials()
-                           .AllowAnyHeader();
+                    builder.WithOrigins(applicationOptions.HostedClientUrl) 
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .AllowAnyHeader();
                 });
         });
     }

@@ -8,4 +8,6 @@ public class ApplicationOptions
 
     [Required]
     public required string HostedClientUrl { get; set; }
+
+    public bool HttpOnly { get; set; } = false;
 }
