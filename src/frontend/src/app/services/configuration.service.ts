@@ -26,6 +26,18 @@ export class ConfigurationService {
     }
 
     getApiBaseUrl(): string {
-        return this.configSubject.getValue().apiBaseUrl;
+        var url = this.configSubject.getValue().apiBaseUrl;
+
+        if (url == "") {
+            this.loadConfig().then(() => {
+                url = this.configSubject.getValue().apiBaseUrl;
+            });
+        }
+
+        if (url == "") {
+            throw new Error("API Base url is empty!");
+        }
+
+        return url;
     }
 }
