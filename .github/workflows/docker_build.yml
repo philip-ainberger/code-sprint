@@ -50,3 +50,7 @@ jobs:
           echo "Building image ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }}"
           docker build -t ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }} -f ${{ matrix.dockerfile }} ${{ matrix.context }}
           docker push ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }}
+          
+          echo "Tagging image as latest"
+          docker tag ${{ matrix.image_tag }}:$TIMESTAMP-${{ github.sha }} ${{ matrix.image_tag }}:latest
+          docker push ${{ matrix.image_tag }}:latest
