@@ -129,8 +129,10 @@ public static class SetupExtensions
             options.AddPolicy(Environments.Production,
                 builder =>
                 {
-                    builder.WithOrigins(new Uri(applicationOptions.HostedClientUrl).Host)
-                        .AllowCredentials();
+                    builder.WithOrigins(applicationOptions.HostedClientUrl)
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .AllowAnyHeader();
                 });
 
             options.AddPolicy(Environments.Development,
