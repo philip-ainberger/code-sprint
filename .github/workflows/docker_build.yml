@@ -44,6 +44,10 @@ jobs:
           username: ${{ secrets.CI_REGISTRY_USER }}
           password: ${{ secrets.CI_REGISTRY_PAT }}
           
+      - name: Get current date
+        id: date
+        run: echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV          
+          
       - name: Determine changes
         id: check_changes
         run: |
