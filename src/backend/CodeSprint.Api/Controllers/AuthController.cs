@@ -12,7 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace CodeSprint.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {

@@ -13,6 +13,6 @@ export class LoginPage {
   }
     
   loginWithGithub(): void {
-    window.location.href = this.apiBaseUrl + '/api/auth/github-auth';
+    window.location.href = this.apiBaseUrl + '/auth/github-auth';
   }
 }
