@@ -15,7 +15,7 @@ export class AuthService {
 
     private refreshToken(): void {
         this.http.get<{ token: string, expiresIn: number }>(
-            this.configService.getApiBaseUrl() + '/api/auth/refresh',
+            this.configService.getApiBaseUrl() + '/auth/refresh',
             { withCredentials: true }
         ).subscribe({
             next: (response) => {
@@ -43,7 +43,7 @@ export class AuthService {
         var token = this.getToken();
 
         this.http.get<{ expiresIn: number }>(
-            this.configService.getApiBaseUrl() + '/api/auth/validate',
+            this.configService.getApiBaseUrl() + '/auth/validate',
             { headers: { "Authorization": `Bearer ${token.value}` } }
         ).subscribe({
             next: (response) => {
