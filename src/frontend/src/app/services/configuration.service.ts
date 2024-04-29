@@ -19,6 +19,7 @@ export class ConfigurationService {
     async loadConfig(): Promise<void> {
         const config = await firstValueFrom(this.http.get<AppConfig>(this.configUrl));
         this.configSubject.next(config);
+        console.log("Loaded config ...");
     }
 
     getConfig(): Observable<AppConfig | null> {

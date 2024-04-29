@@ -7,17 +7,15 @@ import { BehaviorSubject, tap, timer } from 'rxjs';
     providedIn: 'root',
 })
 export class AuthService {
-    private apiBaseUrl: string;
     private tokenSubject = new BehaviorSubject<string | null>(null);
 
     constructor(private http: HttpClient, private configService: ConfigurationService) {
-        this.apiBaseUrl = this.configService.getApiBaseUrl();
         this.initializeTokenRefresh();
     }
 
     private refreshToken(): void {
         this.http.get<{ token: string, expiresIn: number }>(
-            this.apiBaseUrl + '/api/auth/refresh',
+            this.configService.getApiBaseUrl() + '/api/auth/refresh',
             { withCredentials: true }
         ).subscribe({
             next: (response) => {
@@ -45,7 +43,7 @@ export class AuthService {
         var token = this.getToken();
 
         this.http.get<{ expiresIn: number }>(
-            this.apiBaseUrl + '/api/auth/validate',
+            this.configService.getApiBaseUrl() + '/api/auth/validate',
             { headers: { "Authorization": `Bearer ${token.value}` } }
         ).subscribe({
             next: (response) => {
